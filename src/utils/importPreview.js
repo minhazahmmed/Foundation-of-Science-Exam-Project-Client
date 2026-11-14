@@ -21,6 +21,10 @@ export function normalizeForPreview(item, index) {
   if (!text.trim() && !item?.image) problems.push('প্রশ্নের লেখা নেই');
   if (options.length !== 4) problems.push('অপশন ঠিক ৪টা হতে হবে');
 
+  options.forEach((option, i) => {
+    if (!option.text.trim() && !option.image) problems.push(`অপশন ${LETTERS[i]} খালি`);
+  });
+
   const seen = new Map();
   options.forEach((option, i) => {
     const key = option.text.replace(/\s+/g, '');
@@ -28,8 +32,6 @@ export function normalizeForPreview(item, index) {
     if (seen.has(key)) problems.push(`অপশন ${LETTERS[seen.get(key)]} ও ${LETTERS[i]} হুবহু এক`);
     else seen.set(key, i);
   });
-
-  if (correctIndex < 0 || correctIndex > 3) problems.push('সঠিক উত্তর ঠিক করা নেই');
 
   // ছবির কোনো অংশ AI পড়তে না পারলে [অস্পষ্ট] লিখে রাখে
   const hasBlurry = [text, item?.passage, ...options.map((o) => o.text)].some((t) => String(t || '').includes('[অস্পষ্ট]'));
@@ -41,11 +43,12 @@ export function normalizeForPreview(item, index) {
     passage: item?.passage || '',
     board: item?.board || '',
     image: item?.image || '',
+    passageImage: item?.passageImage || '',
     options,
-    correctIndex,
+    // ছবি থেকে আনা প্রশ্নে সঠিক উত্তর টিচার নিজে বাছে, তাই না থাকাটা সমস্যা নয়, বাকি কাজ
+    correctIndex: correctIndex >= 0 && correctIndex <= 3 ? correctIndex : -1,
     needsImage: item?.needsImage || '',
     bookNo: item?.bookNo ?? null,
-    guessed: Boolean(item?.answerGuessed),
     problems,
   };
 }

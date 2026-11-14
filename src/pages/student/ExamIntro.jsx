@@ -35,7 +35,7 @@ export default function ExamIntro() {
         {facts.map(({ icon: Icon, label, value }) => (
           <div key={label} className="rounded-box border border-base-300 p-3 text-center sm:p-4">
             <Icon className="mx-auto mb-1 text-primary" size={22} aria-hidden="true" />
-            <p className="text-xs text-base-content/70 sm:text-sm">{label}</p>
+            <p className="text-xs text-base-content/85 sm:text-sm">{label}</p>
             <p className="text-base font-bold sm:text-lg">{value}</p>
           </div>
         ))}

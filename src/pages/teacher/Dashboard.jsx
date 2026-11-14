@@ -53,7 +53,7 @@ export default function Dashboard() {
                 </span>
               </div>
 
-              <p className="text-sm text-base-content/70">
+              <p className="text-sm text-base-content/85">
                 {toBn(exam.questionCount)}টি প্রশ্ন · {toBn(exam.durationMinutes)} মিনিট · {formatDateTime(exam.createdAt)}
               </p>
 

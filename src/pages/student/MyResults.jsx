@@ -32,13 +32,13 @@ export default function MyResults() {
             <li key={a.attemptId} className="flex flex-col gap-3 rounded-box border border-base-300 p-4 sm:flex-row sm:items-center sm:justify-between">
               <div className="min-w-0">
                 <h2 className="truncate text-lg font-semibold">{a.exam?.title}</h2>
-                <p className="text-sm text-base-content/70">{formatDateTime(a.submittedAt)}</p>
+                <p className="text-sm text-base-content/85">{formatDateTime(a.submittedAt)}</p>
               </div>
               <div className="flex items-center justify-between gap-4 sm:justify-end">
                 <p className="text-right">
                   <span className="text-2xl font-bold text-primary">{formatNumber(a.score)}</span>
-                  <span className="text-base-content/70"> / {formatNumber(a.total)}</span>
-                  <span className="ml-2 text-sm text-base-content/70">({toBn(percentOf(a.score, a.total))}%)</span>
+                  <span className="text-base-content/85"> / {formatNumber(a.total)}</span>
+                  <span className="ml-2 text-sm text-base-content/85">({toBn(percentOf(a.score, a.total))}%)</span>
                 </p>
                 <Link to={`/result/${a.attemptId}`} className="btn btn-primary btn-sm">
                   বিস্তারিত দেখো

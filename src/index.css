@@ -13,7 +13,7 @@
   --color-base-100: #ffffff;
   --color-base-200: #f3f7f7;
   --color-base-300: #d9e4e4;
-  --color-base-content: #16292b;
+  --color-base-content: #0e1f21;
 
   --color-primary: #00828a;
   --color-primary-content: #ffffff;
@@ -45,6 +45,7 @@
 
 html {
   font-family: "Hind Siliguri", system-ui, sans-serif;
+  font-size: 106.25%; /* ১৭ পিক্সেল: লেখা একটু বড়, সহজে পড়া যায় */
 }
 
 body {
@@ -55,4 +56,21 @@ body {
 /* KaTeX এর লেখা আশেপাশের লেখার সাথে মানানসই রাখে */
 .katex {
   font-size: 1.05em;
+}
+
+/* হোম পেজের ইউটিউব কার্ডের নড়াচড়া: লোগো ভাসে, পেছনে গোল ঢেউ ছড়ায় */
+@keyframes fos-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+@keyframes fos-ring {
+  0% { transform: scale(0.9); opacity: 0.7; }
+  100% { transform: scale(1.55); opacity: 0; }
+}
+.fos-float { animation: fos-float 3.2s ease-in-out infinite; }
+.fos-ring { animation: fos-ring 2.4s ease-out infinite; }
+
+/* যাদের ডিভাইসে নড়াচড়া কমানো থাকে তাদের জন্য সব স্থির */
+@media (prefers-reduced-motion: reduce) {
+  .fos-float, .fos-ring { animation: none; }
 }

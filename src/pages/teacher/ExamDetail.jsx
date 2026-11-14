@@ -88,7 +88,7 @@ export default function ExamDetail() {
             <h1 className="text-2xl font-bold sm:text-3xl">{info.title}</h1>
             <span className={`badge ${info.isActive ? 'badge-success badge-soft' : 'badge-ghost'}`}>{info.isActive ? 'চালু' : 'বন্ধ'}</span>
           </div>
-          <p className="mt-1 text-sm text-base-content/70">
+          <p className="mt-1 text-sm text-base-content/85">
             {toBn(info.questions.length)}টি প্রশ্ন · {toBn(info.durationMinutes)} মিনিট · প্রতি প্রশ্নে {formatNumber(info.marksPerQuestion)} নম্বর
             {info.negativeMark > 0 && ` · ভুলে −${formatNumber(info.negativeMark)}`}
           </p>
@@ -114,7 +114,7 @@ export default function ExamDetail() {
         {stats.map((s) => (
           <div key={s.label} className="rounded-box border border-base-300 p-3 text-center">
             <p className="text-2xl font-bold text-primary">{s.value}</p>
-            <p className="text-xs text-base-content/70 sm:text-sm">{s.label}</p>
+            <p className="text-xs text-base-content/85 sm:text-sm">{s.label}</p>
           </div>
         ))}
       </div>
@@ -151,7 +151,7 @@ function StudentsTable({ attempts }) {
 
   const rows = attempts.data.attempts;
   if (rows.length === 0) {
-    return <p className="rounded-box border border-dashed border-base-300 p-8 text-center text-base-content/70">এখনো কেউ এই পরীক্ষা শুরু করেনি। লিংকটা স্টুডেন্টদের পাঠিয়ে দাও।</p>;
+    return <p className="rounded-box border border-dashed border-base-300 p-8 text-center text-base-content/85">এখনো কেউ এই পরীক্ষা শুরু করেনি। লিংকটা স্টুডেন্টদের পাঠিয়ে দাও।</p>;
   }
 
   return (
@@ -173,11 +173,11 @@ function StudentsTable({ attempts }) {
             <tr key={a.attemptId}>
               <td>
                 <p className="font-medium">{a.student?.name}</p>
-                <p className="text-xs text-base-content/60">{a.student?.email}</p>
+                <p className="text-xs text-base-content/75">{a.student?.email}</p>
               </td>
               {a.status === 'submitted' ? (
                 <>
-                  <td className="font-semibold whitespace-nowrap">{formatNumber(a.score)} / {formatNumber(a.total)} <span className="font-normal text-base-content/60">({toBn(a.percent)}%)</span></td>
+                  <td className="font-semibold whitespace-nowrap">{formatNumber(a.score)} / {formatNumber(a.total)} <span className="font-normal text-base-content/75">({toBn(a.percent)}%)</span></td>
                   <td className="text-success">{toBn(a.correctCount)}</td>
                   <td className="text-error">{toBn(a.wrongCount)}</td>
                   <td>{toBn(a.skippedCount)}</td>
@@ -187,7 +187,7 @@ function StudentsTable({ attempts }) {
                   </td>
                 </>
               ) : (
-                <td colSpan={6} className="text-sm text-base-content/70">পরীক্ষা চলছে, এখনো জমা দেয়নি</td>
+                <td colSpan={6} className="text-sm text-base-content/85">পরীক্ষা চলছে, এখনো জমা দেয়নি</td>
               )}
             </tr>
           ))}
@@ -203,7 +203,7 @@ function QuestionAnalysis({ analysis }) {
 
   const { summary, questions } = analysis.data;
   if (summary.attemptCount === 0) {
-    return <p className="rounded-box border border-dashed border-base-300 p-8 text-center text-base-content/70">কেউ পরীক্ষা জমা দিলে এখানে প্রশ্নভিত্তিক হিসাব দেখা যাবে।</p>;
+    return <p className="rounded-box border border-dashed border-base-300 p-8 text-center text-base-content/85">কেউ পরীক্ষা জমা দিলে এখানে প্রশ্নভিত্তিক হিসাব দেখা যাবে।</p>;
   }
 
   const chartData = questions.map((q, i) => ({ name: toBn(i + 1), ভুল: q.wrongPercent }));
@@ -215,7 +215,7 @@ function QuestionAnalysis({ analysis }) {
     <div className="grid gap-6">
       <section className="rounded-box border border-base-300 p-3 sm:p-5">
         <h2 className="mb-1 font-semibold">প্রতিটা প্রশ্নে কত শতাংশ ভুল করেছে</h2>
-        <p className="mb-3 text-sm text-base-content/70">যে প্রশ্নের স্তম্ভ যত উঁচু, সেই বিষয়টা আবার বুঝিয়ে দেওয়া দরকার।</p>
+        <p className="mb-3 text-sm text-base-content/85">যে প্রশ্নের স্তম্ভ যত উঁচু, সেই বিষয়টা আবার বুঝিয়ে দেওয়া দরকার।</p>
         <div className="h-64 w-full">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={chartData} margin={{ top: 8, right: 8, left: -16, bottom: 0 }}>
@@ -248,7 +248,7 @@ function QuestionAnalysis({ analysis }) {
                   </div>
                 ))}
               </div>
-              {q.skipped > 0 && <p className="mt-2 text-xs text-base-content/60">{toBn(q.skipped)} জন উত্তর দেয়নি</p>}
+              {q.skipped > 0 && <p className="mt-2 text-xs text-base-content/75">{toBn(q.skipped)} জন উত্তর দেয়নি</p>}
             </li>
           ))}
         </ul>

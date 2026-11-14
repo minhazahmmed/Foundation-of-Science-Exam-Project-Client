@@ -160,7 +160,7 @@ export default function CreateExam() {
                     ))}
                   </ul>
                   {questions.data.total > list.length && (
-                    <p className="mt-2 text-xs text-base-content/60">এখানে প্রথম ১০০টা দেখানো হচ্ছে। অধ্যায় বেছে নিলে ছোট তালিকা পাবে।</p>
+                    <p className="mt-2 text-xs text-base-content/75">এখানে প্রথম ১০০টা দেখানো হচ্ছে। অধ্যায় বেছে নিলে ছোট তালিকা পাবে।</p>
                   )}
                 </>
               )}

@@ -48,7 +48,7 @@ export default function Result() {
   const stats = [
     { label: 'সঠিক', value: data.correctCount, color: 'text-success' },
     { label: 'ভুল', value: data.wrongCount, color: 'text-error' },
-    { label: 'উত্তর দাওনি', value: data.skippedCount, color: 'text-base-content/70' },
+    { label: 'উত্তর দাওনি', value: data.skippedCount, color: 'text-base-content/85' },
   ];
 
   return (
@@ -64,23 +64,23 @@ export default function Result() {
       )}
 
       <section className="rounded-box border border-base-300 p-5 text-center sm:p-8">
-        <p className="text-sm text-base-content/70">
+        <p className="text-sm text-base-content/85">
           {forTeacher ? `${data.student.name} · ` : ''}
           {data.exam.title}
         </p>
         <p className="mt-3 text-5xl font-bold text-primary sm:text-6xl">
           {formatNumber(data.score)}
-          <span className="text-2xl font-medium text-base-content/60 sm:text-3xl"> / {formatNumber(data.total)}</span>
+          <span className="text-2xl font-medium text-base-content/75 sm:text-3xl"> / {formatNumber(data.total)}</span>
         </p>
         <p className="mt-1 font-medium">{toBn(percent)}%</p>
-        {!forTeacher && <p className="mx-auto mt-3 max-w-md text-base-content/80">{cheerUp(percent)}</p>}
-        <p className="mt-3 text-xs text-base-content/60">জমা দেওয়ার সময়: {formatDateTime(data.submittedAt)}</p>
+        {!forTeacher && <p className="mx-auto mt-3 max-w-md text-base-content/90">{cheerUp(percent)}</p>}
+        <p className="mt-3 text-xs text-base-content/75">জমা দেওয়ার সময়: {formatDateTime(data.submittedAt)}</p>
 
         <div className="mt-5 grid grid-cols-3 gap-2 border-t border-base-300 pt-4">
           {stats.map((s) => (
             <div key={s.label}>
               <p className={`text-2xl font-bold ${s.color}`}>{toBn(s.value)}</p>
-              <p className="text-xs text-base-content/70 sm:text-sm">{s.label}</p>
+              <p className="text-xs text-base-content/85 sm:text-sm">{s.label}</p>
             </div>
           ))}
         </div>
@@ -97,7 +97,7 @@ export default function Result() {
       </div>
 
       {visible.length === 0 ? (
-        <p className="rounded-box border border-dashed border-base-300 p-8 text-center text-base-content/70">এই ভাগে কোনো প্রশ্ন নেই।</p>
+        <p className="rounded-box border border-dashed border-base-300 p-8 text-center text-base-content/85">এই ভাগে কোনো প্রশ্ন নেই।</p>
       ) : (
         <ul className="grid gap-4">
           {visible.map(({ q, number }) => (

@@ -14,6 +14,7 @@ import CreateExam from './pages/teacher/CreateExam.jsx';
 import Dashboard from './pages/teacher/Dashboard.jsx';
 import ExamDetail from './pages/teacher/ExamDetail.jsx';
 import QuestionBank from './pages/teacher/QuestionBank.jsx';
+import QuestionBuilder from './pages/teacher/QuestionBuilder.jsx';
 import PrivateRoute from './routes/PrivateRoute.jsx';
 
 export default function App() {
@@ -45,6 +46,7 @@ export default function App() {
 
           <Route path="/teacher" element={<PrivateRoute role="teacher"><Dashboard /></PrivateRoute>} />
           <Route path="/teacher/questions" element={<PrivateRoute role="teacher"><QuestionBank /></PrivateRoute>} />
+          <Route path="/teacher/questions/new" element={<PrivateRoute role="teacher"><QuestionBuilder /></PrivateRoute>} />
           <Route path="/teacher/import" element={<PrivateRoute role="teacher"><BulkImport /></PrivateRoute>} />
           <Route path="/teacher/exams/new" element={<PrivateRoute role="teacher"><CreateExam /></PrivateRoute>} />
           <Route path="/teacher/exams/:id" element={<PrivateRoute role="teacher"><ExamDetail /></PrivateRoute>} />

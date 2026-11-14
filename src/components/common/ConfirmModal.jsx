@@ -15,7 +15,7 @@ export default function ConfirmModal({
     <div className="modal modal-open" role="dialog" aria-modal="true">
       <div className="modal-box">
         <h3 className="text-lg font-bold">{title}</h3>
-        <p className="py-3 text-base-content/80">{message}</p>
+        <p className="py-3 text-base-content/90">{message}</p>
         <div className="modal-action">
           <button type="button" className="btn btn-ghost" onClick={onCancel} disabled={loading}>
             {cancelText}

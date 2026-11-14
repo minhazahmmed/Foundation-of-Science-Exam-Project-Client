@@ -6,8 +6,9 @@ import MathText from '../math/MathText.jsx';
 //   'exam'   → স্টুডেন্ট অপশনে ক্লিক করে উত্তর দেয় (onSelect লাগে)
 //   'review' → পরীক্ষার পরে: সঠিক সবুজ, ভুল লাল
 //   'bank'   → প্রশ্ন ব্যাংকে: শুধু সঠিক উত্তর সবুজ
+//   'pick'   → টিচার অপশনে ক্লিক করে সঠিক উত্তর ঠিক করে (selectedIndex = সঠিক অপশন, onSelect লাগে)
 export default function QuestionView({ question, number, mode = 'bank', selectedIndex = null, onSelect }) {
-  const { text, image, passage, board, options, correctIndex, explanation } = question;
+  const { text, image, passage, passageImage, board, options, correctIndex, explanation } = question;
 
   return (
     <article className="flex flex-col gap-3">
@@ -16,9 +17,10 @@ export default function QuestionView({ question, number, mode = 'bank', selected
         {board && <span className="badge badge-ghost">{board}</span>}
       </div>
 
-      {passage && (
-        <div className="rounded-box bg-base-200 p-3 text-sm sm:text-base">
-          <MathText text={passage} />
+      {(passage || passageImage) && (
+        <div className="grid gap-2 rounded-box bg-base-200 p-3 text-base sm:text-lg">
+          {passage && <MathText text={passage} />}
+          {passageImage && <img src={passageImage} alt="উদ্দীপকের চিত্র" className="max-h-80 w-auto max-w-full rounded-box bg-base-100 object-contain" />}
         </div>
       )}
 
@@ -56,7 +58,7 @@ export default function QuestionView({ question, number, mode = 'bank', selected
 
 function Option({ option, index, mode, isSelected, isCorrect, onSelect }) {
   let box = 'border-base-300';
-  let badge = 'border-base-content/40 text-base-content/70';
+  let badge = 'border-base-content/40 text-base-content/85';
   let note = null;
 
   if (mode === 'exam' && isSelected) {
@@ -80,6 +82,14 @@ function Option({ option, index, mode, isSelected, isCorrect, onSelect }) {
         </span>
       );
     }
+  } else if (mode === 'pick' && isSelected) {
+    box = 'border-success bg-success/10';
+    badge = 'border-success bg-success text-success-content';
+    note = (
+      <span className="flex items-center gap-1 text-xs font-semibold text-success sm:text-sm">
+        <FiCheckCircle aria-hidden="true" /> সঠিক উত্তর
+      </span>
+    );
   } else if (mode === 'bank' && isCorrect) {
     box = 'border-success bg-success/10';
     badge = 'border-success bg-success text-success-content';
@@ -105,7 +115,7 @@ function Option({ option, index, mode, isSelected, isCorrect, onSelect }) {
 
   const shared = `flex w-full items-center gap-3 rounded-box border px-3 py-2 ${box}`;
 
-  if (mode === 'exam') {
+  if (mode === 'exam' || mode === 'pick') {
     return (
       <button
         type="button"

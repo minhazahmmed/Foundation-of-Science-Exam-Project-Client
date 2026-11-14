@@ -119,7 +119,7 @@ function ExamRunner({ data }) {
             <img src="/logo.png" alt="" className="h-8 w-8 shrink-0" />
             <div className="min-w-0">
               <h1 className="truncate font-bold leading-tight">{exam.title}</h1>
-              <p className="text-xs text-base-content/70">
+              <p className="text-xs text-base-content/85">
                 উত্তর দিয়েছ {toBn(answeredCount)}/{toBn(questions.length)}
               </p>
             </div>

@@ -12,6 +12,7 @@ const emptyForm = {
   chapter: '',
   board: '',
   passage: '',
+  passageImage: '',
   text: '',
   image: '',
   options: [0, 1, 2, 3].map(() => ({ text: '', image: '' })),
@@ -24,6 +25,7 @@ const fromQuestion = (q) => ({
   chapter: q.chapter || '',
   board: q.board || '',
   passage: q.passage || '',
+  passageImage: q.passageImage || '',
   text: q.text || '',
   image: q.image || '',
   options: q.options.map((o) => ({ text: o.text || '', image: o.image || '' })),
@@ -68,7 +70,7 @@ export default function QuestionForm({ question, chapters = [], onSaved, onClose
     <div className="modal modal-open items-start overflow-y-auto sm:items-center" role="dialog" aria-modal="true">
       <form onSubmit={handleSubmit} className="modal-box my-4 max-h-none w-full max-w-2xl">
         <h3 className="text-xl font-bold">{question ? 'প্রশ্ন ঠিক করো' : 'নতুন প্রশ্ন যোগ করো'}</h3>
-        <p className="mt-1 text-sm text-base-content/70">
+        <p className="mt-1 text-sm text-base-content/85">
           সমীকরণ লিখতে <code className="rounded bg-base-200 px-1">$</code> চিহ্নের ভেতরে লেখো, যেমন{' '}
           <code className="rounded bg-base-200 px-1">{'$\\frac{x^2}{2}$'}</code>
         </p>
@@ -95,12 +97,16 @@ export default function QuestionForm({ question, chapters = [], onSaved, onClose
             <textarea className="textarea w-full" rows={2} value={form.passage} onChange={(e) => set('passage', e.target.value)} />
           </Field>
 
+          <Field label="উদ্দীপকের চিত্র (থাকলে)">
+            <ImageInput value={form.passageImage} onChange={(url) => set('passageImage', url)} />
+          </Field>
+
           <Field label="প্রশ্ন">
             <textarea className="textarea w-full" rows={3} value={form.text} onChange={(e) => set('text', e.target.value)} />
           </Field>
           {form.text.includes('$') && (
             <div className="rounded-box border border-dashed border-base-300 p-3 text-sm">
-              <span className="mb-1 block text-xs text-base-content/60">প্রশ্নটা এভাবে দেখাবে</span>
+              <span className="mb-1 block text-xs text-base-content/75">প্রশ্নটা এভাবে দেখাবে</span>
               <MathText text={form.text} />
             </div>
           )}

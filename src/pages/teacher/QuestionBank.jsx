@@ -76,10 +76,10 @@ export default function QuestionBank() {
         subtitle="একবার যোগ করা প্রশ্ন যেকোনো পরীক্ষায় বারবার ব্যবহার করা যাবে"
         actions={
           <>
-            <Link to="/teacher/import" className="btn btn-outline">ইমপোর্ট করো</Link>
-            <button type="button" className="btn btn-primary" onClick={() => setEditing({})}>
+            <Link to="/teacher/import" className="btn btn-outline">ছবি থেকে নাও</Link>
+            <Link to="/teacher/questions/new" className="btn btn-primary">
               <FiPlus aria-hidden="true" /> নতুন প্রশ্ন
-            </button>
+            </Link>
           </>
         }
       />
@@ -111,7 +111,7 @@ export default function QuestionBank() {
 
       {data && data.questions.length > 0 && (
         <>
-          <p className="mb-3 text-sm text-base-content/70">মোট {toBn(data.total)}টি প্রশ্ন</p>
+          <p className="mb-3 text-sm text-base-content/85">মোট {toBn(data.total)}টি প্রশ্ন</p>
           <ul className="grid gap-4">
             {data.questions.map((q, i) => (
               <li key={q._id} className="rounded-box border border-base-300 p-4 sm:p-5">
