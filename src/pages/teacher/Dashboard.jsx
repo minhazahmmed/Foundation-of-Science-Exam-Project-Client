@@ -1,7 +1,10 @@
-import { useCallback } from 'react';
-import { FiPlus, FiUsers } from 'react-icons/fi';
+import { useCallback, useState } from 'react';
+import toast from 'react-hot-toast';
+import { FiPlus, FiTrash2, FiUsers } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
-import { listExams } from '../../api/exams.api.js';
+import { getErrorMessage } from '../../api/axios.js';
+import { deleteExam, listExams } from '../../api/exams.api.js';
+import ConfirmModal from '../../components/common/ConfirmModal.jsx';
 import CopyButton from '../../components/common/CopyButton.jsx';
 import EmptyState from '../../components/common/EmptyState.jsx';
 import ErrorBox from '../../components/common/ErrorBox.jsx';
@@ -13,6 +16,22 @@ import { formatDateTime, formatNumber, toBn } from '../../utils/format.js';
 export default function Dashboard() {
   const fetcher = useCallback(() => listExams(), []);
   const { data, error, loading, reload } = useFetch(fetcher);
+  const [deleting, setDeleting] = useState(null); // যে পরীক্ষা মোছার জন্য বাছা হয়েছে
+  const [busy, setBusy] = useState(false);
+
+  async function handleDelete() {
+    setBusy(true);
+    try {
+      await deleteExam(deleting._id);
+      toast.success('পরীক্ষা মুছে ফেলা হয়েছে');
+      setDeleting(null);
+      reload();
+    } catch (err) {
+      toast.error(getErrorMessage(err));
+    } finally {
+      setBusy(false);
+    }
+  }
 
   return (
     <>
@@ -70,11 +89,29 @@ export default function Dashboard() {
                 <Link to={`/teacher/exams/${exam._id}`} className="btn btn-sm btn-primary">
                   ফলাফল ও বিস্তারিত
                 </Link>
+                <button type="button" className="btn btn-sm btn-ghost text-error ml-auto" onClick={() => setDeleting(exam)}>
+                  <FiTrash2 aria-hidden="true" /> মোছো
+                </button>
               </div>
             </li>
           ))}
         </ul>
       )}
+
+      <ConfirmModal
+        open={Boolean(deleting)}
+        title="পরীক্ষাটা মুছে ফেলবে?"
+        message={
+          deleting && deleting.submittedCount > 0
+            ? `"${deleting.title}" মুছলে ${toBn(deleting.submittedCount)} জন স্টুডেন্টের ফলাফলও মুছে যাবে। এটা আর ফেরত আনা যাবে না। প্রশ্ন ব্যাংকের প্রশ্নগুলো থেকে যাবে।`
+            : deleting && `"${deleting.title}" মুছে গেলে এর লিংকটাও আর কাজ করবে না। প্রশ্ন ব্যাংকের প্রশ্নগুলো থেকে যাবে।`
+        }
+        confirmText="হ্যাঁ, মুছে ফেলো"
+        danger
+        loading={busy}
+        onConfirm={handleDelete}
+        onCancel={() => setDeleting(null)}
+      />
     </>
   );
 }

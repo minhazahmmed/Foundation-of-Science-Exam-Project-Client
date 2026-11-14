@@ -2,9 +2,20 @@ import { useRef, useState } from 'react';
 import { FiCopy, FiTrash2 } from 'react-icons/fi';
 import { LETTERS, toBn } from '../../utils/format.js';
 import { insertSnippet } from '../../utils/insertSnippet.js';
+import MathText from '../math/MathText.jsx';
 import MathToolbar from './MathToolbar.jsx';
 import ImageInput from './ImageInput.jsx';
 import QuestionView from './QuestionView.jsx';
+
+// লেখার ঘরের ঠিক নিচে সমীকরণ কেমন দেখাবে সেটা সাথে সাথে দেখায় ($ থাকলেই)
+function LivePreview({ text }) {
+  if (!text || !text.includes('$')) return null;
+  return (
+    <div className="mt-1 rounded bg-base-200 px-3 py-2 text-lg" aria-label="সমীকরণ কেমন দেখাবে">
+      <MathText text={text} />
+    </div>
+  );
+}
 
 // গুগল ফর্মের মতো একটা প্রশ্নের কার্ড। প্রশ্ন, অপশন আর সঠিক উত্তর এখানেই ঠিক হয়।
 // card: { id, passage, passageImage, text, image, options: [{text, image} × ৪], correctIndex }
@@ -69,6 +80,7 @@ export default function QuestionEditorCard({ card, index, errors = [], onChange,
             <label>
               <span className="mb-1 block text-sm font-medium">উদ্দীপক</span>
               <textarea className="textarea w-full" rows={3} value={card.passage} onFocus={track('passage')} onChange={(e) => onChange({ passage: e.target.value })} />
+              <LivePreview text={card.passage} />
             </label>
             <div>
               <span className="mb-1 block text-sm font-medium">উদ্দীপকের চিত্র (থাকলে)</span>
@@ -80,6 +92,7 @@ export default function QuestionEditorCard({ card, index, errors = [], onChange,
         <label>
           <span className="mb-1 block text-sm font-medium">প্রশ্ন</span>
           <textarea className="textarea w-full text-base" rows={3} value={card.text} onFocus={track('text')} onChange={(e) => onChange({ text: e.target.value })} placeholder="প্রশ্নটা এখানে লেখো" />
+          <LivePreview text={card.text} />
         </label>
 
         <div>
@@ -104,6 +117,9 @@ export default function QuestionEditorCard({ card, index, errors = [], onChange,
                 />
                 <span className="w-5 font-semibold">{LETTERS[i]}</span>
                 <input className="input w-full" value={option.text} onFocus={track(`o${i}`)} onChange={(e) => setOption(i, { text: e.target.value })} placeholder={`অপশন ${LETTERS[i]}`} />
+              </div>
+              <div className="sm:pl-16">
+                <LivePreview text={option.text} />
               </div>
               <div className="mt-2 sm:pl-16">
                 <ImageInput compact value={option.image} onChange={(url) => setOption(i, { image: url })} />
