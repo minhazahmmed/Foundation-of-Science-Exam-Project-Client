@@ -44,6 +44,8 @@ export function normalizeForPreview(item, index) {
     board: item?.board || '',
     image: item?.image || '',
     passageImage: item?.passageImage || '',
+    explanation: item?.explanation || '',
+    explanationImage: item?.explanationImage || '',
     options,
     // ছবি থেকে আনা প্রশ্নে সঠিক উত্তর টিচার নিজে বাছে, তাই না থাকাটা সমস্যা নয়, বাকি কাজ
     correctIndex: correctIndex >= 0 && correctIndex <= 3 ? correctIndex : -1,

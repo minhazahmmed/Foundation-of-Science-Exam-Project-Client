@@ -8,7 +8,7 @@ import MathText from '../math/MathText.jsx';
 //   'bank'   → প্রশ্ন ব্যাংকে: শুধু সঠিক উত্তর সবুজ
 //   'pick'   → টিচার অপশনে ক্লিক করে সঠিক উত্তর ঠিক করে (selectedIndex = সঠিক অপশন, onSelect লাগে)
 export default function QuestionView({ question, number, mode = 'bank', selectedIndex = null, onSelect }) {
-  const { text, image, passage, passageImage, board, options, correctIndex, explanation } = question;
+  const { text, image, passage, passageImage, board, options, correctIndex, explanation, explanationImage } = question;
 
   return (
     <article className="flex flex-col gap-3">
@@ -46,10 +46,11 @@ export default function QuestionView({ question, number, mode = 'bank', selected
         ))}
       </div>
 
-      {mode === 'review' && explanation && (
-        <div className="rounded-box border border-info/40 bg-info/5 p-3 text-sm">
-          <span className="font-semibold">ব্যাখ্যা: </span>
-          <MathText text={explanation} />
+      {(mode === 'review' || mode === 'bank') && (explanation || explanationImage) && (
+        <div className="grid gap-2 rounded-box border border-info/40 bg-info/5 p-3 text-base">
+          <p className="font-semibold">ব্যাখ্যা / সমাধান</p>
+          {explanation && <MathText text={explanation} />}
+          {explanationImage && <img src={explanationImage} alt="সমাধানের ছবি" className="max-h-96 w-auto max-w-full rounded-box bg-base-100 object-contain" />}
         </div>
       )}
     </article>

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { getMe, loginRequest, registerRequest } from '../api/auth.api.js';
+import { getMe, loginRequest, registerRequest, requestTeacherRequest } from '../api/auth.api.js';
 import { TOKEN_KEY } from '../api/axios.js';
 import { AuthContext } from './authContext.js';
 
@@ -38,6 +38,17 @@ export default function AuthProvider({ children }) {
       loading,
       login: async (email, password) => saveLogin(await loginRequest({ email, password })),
       register: async (form) => saveLogin(await registerRequest(form)),
+      // অনুমোদন হয়েছে কিনা দেখতে সার্ভার থেকে ইউজারের তথ্য আবার আনে
+      refreshUser: async () => {
+        const data = await getMe();
+        setUser(data.user);
+        return data.user;
+      },
+      requestTeacher: async () => {
+        const data = await requestTeacherRequest();
+        setUser(data.user);
+        return data.user;
+      },
       logout: () => {
         localStorage.removeItem(TOKEN_KEY);
         setUser(null);

@@ -8,11 +8,11 @@ import { bulkCreateQuestions } from '../../api/questions.api.js';
 import CopyButton from '../../components/common/CopyButton.jsx';
 import Field from '../../components/common/Field.jsx';
 import PageHeader from '../../components/common/PageHeader.jsx';
-import ImageInput from '../../components/question/ImageInput.jsx';
+import QuestionEditorCard from '../../components/question/QuestionEditorCard.jsx';
 import QuestionView from '../../components/question/QuestionView.jsx';
 import { parseAnswerKey } from '../../utils/answerKey.js';
 import { compressImage } from '../../utils/compressImage.js';
-import { LETTERS, toBn } from '../../utils/format.js';
+import { toBn } from '../../utils/format.js';
 import { normalizeForPreview } from '../../utils/importPreview.js';
 
 const MAX_IMAGES = 5;
@@ -178,11 +178,6 @@ export default function BulkImport() {
       })
     );
 
-  const editOption = (index, optionIndex, value) =>
-    editItem(index, {
-      options: items[index].options.map((o, j) => (j === optionIndex ? { ...o, text: value } : o)),
-    });
-
   // সমস্যাওয়ালা বা দরকার নেই এমন প্রশ্ন তালিকা থেকে বাদ দেওয়া
   const removeItem = (index) =>
     setItems((prev) => {
@@ -200,6 +195,13 @@ export default function BulkImport() {
         return i === index || sharesPassage ? { ...item, [field]: url } : item;
       });
     });
+  }
+
+  // ঠিক করার কার্ড থেকে আসা বদল। উদ্দীপকের ছবি হলে একই উদ্দীপকওয়ালা সব প্রশ্নে বসে যায়
+  function handleCardChange(index, patch) {
+    const { passageImage, ...rest } = patch;
+    if (passageImage !== undefined) setItemImage(index, 'passageImage', passageImage);
+    if (Object.keys(rest).length > 0) editItem(index, rest);
   }
 
   // বইয়ের শেষের উত্তরমালা থাকলে "খ ক গ ঘ ..." লিখে সবগুলো একবারে বসানো যায়
@@ -232,6 +234,8 @@ export default function BulkImport() {
         image: item.image,
         options: item.options,
         correctIndex: item.correctIndex,
+        explanation: item.explanation,
+        explanationImage: item.explanationImage,
       }));
       const result = await bulkCreateQuestions({ chapter, subject, questions });
 
@@ -468,7 +472,7 @@ export default function BulkImport() {
                 )}
                 {item.needsImage && (
                   <p className="mb-3 rounded bg-secondary/30 px-3 py-2 text-base">
-                    এই প্রশ্নে ছবি লাগবে ({item.needsImage})। নিচের "চিত্র যোগ করো" অংশ থেকে ছবি দাও।
+                    এই প্রশ্নে ছবি লাগবে ({item.needsImage})। নিচের "সঠিক উত্তর বাছো, লেখা ঠিক করো, ছবি ও ব্যাখ্যা যোগ করো" অংশ থেকে ছবি দাও।
                   </p>
                 )}
                 {item.options.length === 4 ? (
@@ -482,50 +486,14 @@ export default function BulkImport() {
                   <p>{item.text}</p>
                 )}
 
-                <details className="mt-4 rounded-box border border-base-300 p-3" open={item.problems.length > 0}>
-                  <summary className="cursor-pointer text-base font-semibold text-primary">সঠিক উত্তর বাছো ও লেখা ঠিক করো</summary>
-                  <div className="mt-3 grid gap-3">
-                    {item.passage && (
-                      <Field label="উদ্দীপক">
-                        <textarea className="textarea w-full" rows={2} value={item.passage} onChange={(e) => editItem(index, { passage: e.target.value })} />
-                      </Field>
-                    )}
-                    <Field label="প্রশ্ন">
-                      <textarea className="textarea w-full" rows={3} value={item.text} onChange={(e) => editItem(index, { text: e.target.value })} />
-                    </Field>
-                    <fieldset className="grid gap-2">
-                      <legend className="mb-1 text-sm font-medium">অপশন (সঠিকটার পাশের গোল ঘরে টিক দাও)</legend>
-                      {item.options.map((option, k) => (
-                        <div key={k} className="flex items-center gap-3">
-                          <input
-                            type="radio"
-                            name={`correct-${index}`}
-                            className="radio radio-success"
-                            checked={item.correctIndex === k}
-                            onChange={() => updateItem(index, { correctIndex: k })}
-                            aria-label={`অপশন ${LETTERS[k]} সঠিক`}
-                          />
-                          <span className="w-6 shrink-0 font-semibold">{LETTERS[k]}</span>
-                          <input className="input w-full" value={option.text} onChange={(e) => editOption(index, k, e.target.value)} />
-                        </div>
-                      ))}
-                    </fieldset>
-                    <p className="text-sm text-base-content/85">সমীকরণ $ চিহ্নের ভেতরে লেখো, যেমন $\vec{'{A}'}\cdot\vec{'{B}'}$। ওপরের প্রশ্নে সাথে সাথে বদলে দেখাবে।</p>
-                  </div>
-                </details>
-
-                <details className="mt-4 rounded-box border border-base-300 p-3" open={Boolean(item.needsImage)}>
-                  <summary className="cursor-pointer text-base font-semibold text-primary">চিত্র যোগ করো (উদ্দীপক বা প্রশ্নে ছবি থাকলে)</summary>
-                  <div className="mt-3 grid gap-4 sm:grid-cols-2">
-                    <div>
-                      <p className="mb-1 text-sm font-medium">উদ্দীপকের চিত্র</p>
-                      <ImageInput value={item.passageImage} onChange={(url) => setItemImage(index, 'passageImage', url)} />
-                      <p className="mt-1 text-sm text-base-content/85">একই উদ্দীপকওয়ালা সব প্রশ্নে একসাথে বসবে।</p>
-                    </div>
-                    <div>
-                      <p className="mb-1 text-sm font-medium">প্রশ্নের চিত্র</p>
-                      <ImageInput value={item.image} onChange={(url) => setItemImage(index, 'image', url)} />
-                    </div>
+                <details className="mt-4 rounded-box border border-base-300 p-3" open={item.problems.length > 0 || Boolean(item.needsImage)}>
+                  <summary className="cursor-pointer text-base font-semibold text-primary">সঠিক উত্তর বাছো, লেখা ঠিক করো, ছবি ও ব্যাখ্যা যোগ করো</summary>
+                  <div className="mt-3">
+                    <QuestionEditorCard
+                      card={{ ...item, id: `import-${index}` }}
+                      showPreview={false}
+                      onChange={(patch) => handleCardChange(index, patch)}
+                    />
                   </div>
                 </details>
               </li>

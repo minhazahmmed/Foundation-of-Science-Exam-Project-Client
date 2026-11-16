@@ -20,6 +20,8 @@ const emptyCard = () => ({
   image: '',
   options: [0, 1, 2, 3].map(() => ({ text: '', image: '' })),
   correctIndex: -1,
+  explanation: '',
+  explanationImage: '',
 });
 
 // কার্ড থেকে সেভ করার মতো প্রশ্ন বানায়, সাথে সমস্যাগুলোর তালিকা
@@ -69,6 +71,8 @@ export default function QuestionBuilder() {
         image: c.image,
         options: c.options,
         correctIndex: c.correctIndex,
+        explanation: c.explanation,
+        explanationImage: c.explanationImage,
       }));
       const result = await bulkCreateQuestions({ subject, chapter, questions });
       toast.success(`${toBn(result.created)}টি প্রশ্ন প্রশ্ন ব্যাংকে যোগ হয়েছে`);

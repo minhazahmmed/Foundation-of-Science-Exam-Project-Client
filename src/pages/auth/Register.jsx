@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import toast from 'react-hot-toast';
-import { FiEye, FiEyeOff } from 'react-icons/fi';
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { getErrorMessage } from '../../api/axios.js';
 import Field from '../../components/common/Field.jsx';
@@ -14,9 +13,8 @@ export default function Register() {
   const location = useLocation();
   const from = location.state?.from?.pathname;
 
-  const [form, setForm] = useState({ name: '', email: '', password: '', teacherCode: '' });
+  const [form, setForm] = useState({ name: '', email: '', password: '' });
   const [isTeacher, setIsTeacher] = useState(false);
-  const [showTeacherCode, setShowTeacherCode] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   if (user) return <Navigate to={from ?? roleHome(user)} replace />;
@@ -27,8 +25,8 @@ export default function Register() {
     event.preventDefault();
     setSubmitting(true);
     try {
-      const created = await register({ ...form, teacherCode: isTeacher ? form.teacherCode : undefined });
-      toast.success('অ্যাকাউন্ট খোলা হয়ে গেছে');
+      const created = await register({ ...form, wantsTeacher: isTeacher });
+      toast.success(created.teacherRequest === 'pending' ? 'অ্যাকাউন্ট খোলা হয়েছে, শিক্ষকের অনুরোধ অনুমোদনের অপেক্ষায় আছে' : 'অ্যাকাউন্ট খোলা হয়ে গেছে');
       navigate(from ?? roleHome(created), { replace: true });
     } catch (err) {
       toast.error(getErrorMessage(err));
@@ -55,31 +53,17 @@ export default function Register() {
           <PasswordInput minLength={6} autoComplete="new-password" className="text-base" value={form.password} onChange={set('password')} />
         </Field>
 
-        <label className="flex cursor-pointer items-center gap-2 text-sm font-medium">
-          <input type="checkbox" className="checkbox checkbox-sm checkbox-primary" checked={isTeacher} onChange={(e) => setIsTeacher(e.target.checked)} />
-          আমি শিক্ষক
+        <label className="flex cursor-pointer items-start gap-2 text-base font-medium">
+          <input type="checkbox" className="checkbox checkbox-primary mt-0.5" checked={isTeacher} onChange={(e) => setIsTeacher(e.target.checked)} />
+          <span>
+            আমি শিক্ষক
+            {isTeacher && (
+              <span className="mt-1 block text-sm font-normal">
+                অনুরোধ মূল শিক্ষকের কাছে যাবে। অনুমোদন পেলে তুমি প্রশ্ন আর পরীক্ষা বানাতে পারবে। ততক্ষণ স্টুডেন্ট হিসেবে ঢুকবে।
+              </span>
+            )}
+          </span>
         </label>
-        {isTeacher && (
-          <Field label={<span className="text-sm font-semibold">শিক্ষকের গোপন কোড</span>}>
-            <div className="relative">
-              <input
-                type={showTeacherCode ? 'text' : 'password'}
-                required
-                className="input w-full pr-10 text-base"
-                value={form.teacherCode}
-                onChange={set('teacherCode')}
-              />
-              <button
-                type="button"
-                onClick={() => setShowTeacherCode(!showTeacherCode)}
-                className="absolute inset-y-0 right-0 z-10 flex items-center pr-3 text-base-content/60 hover:text-base-content"
-                aria-label={showTeacherCode ? 'কোড লুকাও' : 'কোড দেখো'}
-              >
-                {showTeacherCode ? <FiEyeOff size={18} /> : <FiEye size={18} />}
-              </button>
-            </div>
-          </Field>
-        )}
 
         <button type="submit" className="btn btn-primary w-full text-base font-semibold" disabled={submitting}>
           {submitting && <span className="loading loading-spinner loading-sm" />}

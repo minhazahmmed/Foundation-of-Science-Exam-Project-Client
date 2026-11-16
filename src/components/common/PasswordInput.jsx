@@ -2,14 +2,14 @@ import { useState } from 'react';
 import { FiEye, FiEyeOff } from 'react-icons/fi';
 
 // পাসওয়ার্ডের ঘর, ডানে চোখের বোতাম চাপলে পাসওয়ার্ড দেখা যায়/লুকানো যায়
-export default function PasswordInput({ value, onChange, autoComplete, minLength, required = true }) {
+export default function PasswordInput({ value, onChange, autoComplete, minLength, className = '', required = true }) {
   const [visible, setVisible] = useState(false);
 
   return (
     <div className="relative">
       <input
         type={visible ? 'text' : 'password'}
-        className="input w-full pr-12"
+        className={`input w-full pr-12 ${className}`}
         value={value}
         onChange={onChange}
         autoComplete={autoComplete}
