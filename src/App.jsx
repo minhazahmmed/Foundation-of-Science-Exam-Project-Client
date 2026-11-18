@@ -1,5 +1,6 @@
 import { Toaster } from 'react-hot-toast';
 import { Route, Routes } from 'react-router-dom';
+import ScrollToTop from './components/common/ScrollToTop.jsx';
 import MainLayout from './layouts/MainLayout.jsx';
 import Login from './pages/auth/Login.jsx';
 import Register from './pages/auth/Register.jsx';
@@ -17,12 +18,11 @@ import QuestionBank from './pages/teacher/QuestionBank.jsx';
 import QuestionBuilder from './pages/teacher/QuestionBuilder.jsx';
 import TeacherRequests from './pages/teacher/TeacherRequests.jsx';
 import PrivateRoute from './routes/PrivateRoute.jsx';
-import ScrollToTop from './components/common/ScrollToTop.jsx';
 
 export default function App() {
   return (
     <>
-    <ScrollToTop/>
+      <ScrollToTop />
       <Toaster position="top-center" toastOptions={{ style: { maxWidth: 480 } }} />
 
       <Routes>

@@ -1,4 +1,4 @@
-import { LETTERS } from './format.js';
+import { EN_LETTERS, LETTERS, guessOptionStyle } from './format.js';
 
 // ইমপোর্টের আগে প্রশ্ন দেখানোর জন্য JSON-এর একটা আইটেম গুছিয়ে নেয় এবং সমস্যা থাকলে তালিকা করে।
 // সার্ভারও একই নিয়মে যাচাই করে, এটা শুধু আগেভাগে চোখে দেখানোর জন্য।
@@ -11,25 +11,27 @@ export function normalizeForPreview(item, index) {
       )
     : [];
 
-  const correctIndex = Number.isInteger(item?.correctIndex)
-    ? item.correctIndex
-    : LETTERS.indexOf(String(item?.answer || '').trim());
+  const answerText = String(item?.answer || '').trim();
+  let correctIndex = Number.isInteger(item?.correctIndex) ? item.correctIndex : LETTERS.indexOf(answerText);
+  if (correctIndex < 0 && !Number.isInteger(item?.correctIndex)) correctIndex = EN_LETTERS.indexOf(answerText.toUpperCase());
 
   const text = item?.text ?? item?.question ?? '';
+  const optionStyle = item?.optionStyle === 'en' || item?.optionStyle === 'bn' ? item.optionStyle : guessOptionStyle(text, options);
+  const letters = optionStyle === 'en' ? EN_LETTERS : LETTERS;
   const problems = [];
 
   if (!text.trim() && !item?.image) problems.push('প্রশ্নের লেখা নেই');
   if (options.length !== 4) problems.push('অপশন ঠিক ৪টা হতে হবে');
 
   options.forEach((option, i) => {
-    if (!option.text.trim() && !option.image) problems.push(`অপশন ${LETTERS[i]} খালি`);
+    if (!option.text.trim() && !option.image) problems.push(`অপশন ${letters[i]} খালি`);
   });
 
   const seen = new Map();
   options.forEach((option, i) => {
     const key = option.text.replace(/\s+/g, '');
     if (!key) return;
-    if (seen.has(key)) problems.push(`অপশন ${LETTERS[seen.get(key)]} ও ${LETTERS[i]} হুবহু এক`);
+    if (seen.has(key)) problems.push(`অপশন ${letters[seen.get(key)]} ও ${letters[i]} হুবহু এক`);
     else seen.set(key, i);
   });
 
@@ -46,6 +48,7 @@ export function normalizeForPreview(item, index) {
     passageImage: item?.passageImage || '',
     explanation: item?.explanation || '',
     explanationImage: item?.explanationImage || '',
+    optionStyle,
     options,
     // ছবি থেকে আনা প্রশ্নে সঠিক উত্তর টিচার নিজে বাছে, তাই না থাকাটা সমস্যা নয়, বাকি কাজ
     correctIndex: correctIndex >= 0 && correctIndex <= 3 ? correctIndex : -1,

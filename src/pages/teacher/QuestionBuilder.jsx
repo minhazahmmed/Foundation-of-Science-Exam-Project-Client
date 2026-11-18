@@ -22,6 +22,7 @@ const emptyCard = () => ({
   correctIndex: -1,
   explanation: '',
   explanationImage: '',
+  optionStyle: 'bn',
 });
 
 // কার্ড থেকে সেভ করার মতো প্রশ্ন বানায়, সাথে সমস্যাগুলোর তালিকা
@@ -73,6 +74,7 @@ export default function QuestionBuilder() {
         correctIndex: c.correctIndex,
         explanation: c.explanation,
         explanationImage: c.explanationImage,
+        optionStyle: c.optionStyle,
       }));
       const result = await bulkCreateQuestions({ subject, chapter, questions });
       toast.success(`${toBn(result.created)}টি প্রশ্ন প্রশ্ন ব্যাংকে যোগ হয়েছে`);

@@ -1,5 +1,5 @@
 import { FiCheckCircle, FiXCircle } from 'react-icons/fi';
-import { LETTERS, toBn } from '../../utils/format.js';
+import { lettersOf, toBn } from '../../utils/format.js';
 import MathText from '../math/MathText.jsx';
 
 // mode:
@@ -7,8 +7,12 @@ import MathText from '../math/MathText.jsx';
 //   'review' → পরীক্ষার পরে: সঠিক সবুজ, ভুল লাল
 //   'bank'   → প্রশ্ন ব্যাংকে: শুধু সঠিক উত্তর সবুজ
 //   'pick'   → টিচার অপশনে ক্লিক করে সঠিক উত্তর ঠিক করে (selectedIndex = সঠিক অপশন, onSelect লাগে)
-export default function QuestionView({ question, number, mode = 'bank', selectedIndex = null, onSelect }) {
-  const { text, image, passage, passageImage, board, options, correctIndex, explanation, explanationImage } = question;
+export default function QuestionView({ question, number, mode: givenMode = 'bank', selectedIndex: givenSelected = null, onSelect }) {
+  // 'edit' মোড: 'pick' এর মতোই, শুধু সঠিক অপশনটা প্রশ্নের correctIndex থেকে নেয়
+  const mode = givenMode === 'edit' ? 'pick' : givenMode;
+  const selectedIndex = givenMode === 'edit' ? (question.correctIndex >= 0 ? question.correctIndex : null) : givenSelected;
+  const { text, image, passage, passageImage, board, options, correctIndex, explanation, explanationImage, optionStyle } = question;
+  const letters = lettersOf(optionStyle);
 
   return (
     <article className="flex flex-col gap-3">
@@ -38,6 +42,7 @@ export default function QuestionView({ question, number, mode = 'bank', selected
             key={i}
             option={option}
             index={i}
+            letters={letters}
             mode={mode}
             isSelected={selectedIndex === i}
             isCorrect={correctIndex === i}
@@ -57,7 +62,7 @@ export default function QuestionView({ question, number, mode = 'bank', selected
   );
 }
 
-function Option({ option, index, mode, isSelected, isCorrect, onSelect }) {
+function Option({ option, index, letters, mode, isSelected, isCorrect, onSelect }) {
   let box = 'border-base-300';
   let badge = 'border-base-content/40 text-base-content/85';
   let note = null;
@@ -104,11 +109,11 @@ function Option({ option, index, mode, isSelected, isCorrect, onSelect }) {
   const content = (
     <>
       <span className={`grid h-8 w-8 shrink-0 place-items-center rounded-full border text-sm font-semibold ${badge}`}>
-        {LETTERS[index]}
+        {letters[index]}
       </span>
       <span className="min-w-0 flex-1 overflow-x-auto py-0.5 text-left">
         {option.text && <MathText text={option.text} />}
-        {option.image && <img src={option.image} alt={`অপশন ${LETTERS[index]}`} className="mt-1 max-h-40 max-w-full object-contain" />}
+        {option.image && <img src={option.image} alt={`অপশন ${letters[index]}`} className="mt-1 max-h-40 max-w-full object-contain" />}
       </span>
       {note}
     </>

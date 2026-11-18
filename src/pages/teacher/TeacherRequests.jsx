@@ -24,6 +24,7 @@ export default function TeacherRequests() {
       toast.success(successText);
       setRemoving(null);
       reload();
+      // মেনুর পাশের অপেক্ষার সংখ্যাও নতুন করে গোনার জন্য জানিয়ে দেওয়া হয়
       window.dispatchEvent(new Event('fos:teachers-changed'));
     } catch (err) {
       toast.error(getErrorMessage(err));

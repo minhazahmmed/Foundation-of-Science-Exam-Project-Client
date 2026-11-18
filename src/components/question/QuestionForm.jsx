@@ -15,6 +15,7 @@ const emptyCard = () => ({
   correctIndex: -1,
   explanation: '',
   explanationImage: '',
+  optionStyle: 'bn',
 });
 
 const cardFrom = (q) => ({
@@ -27,6 +28,7 @@ const cardFrom = (q) => ({
   correctIndex: q.correctIndex,
   explanation: q.explanation || '',
   explanationImage: q.explanationImage || '',
+  optionStyle: q.optionStyle || 'bn',
 });
 
 // question না দিলে নতুন প্রশ্ন, দিলে সেই প্রশ্ন ঠিক করা

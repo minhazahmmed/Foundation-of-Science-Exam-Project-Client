@@ -15,15 +15,19 @@ const teacherLinks = [
 // শুধু মূল শিক্ষক দেখবেন
 const ownerLink = { to: '/teacher/requests', label: 'শিক্ষক অনুরোধ' };
 
+// হোম লিংক শুধু স্টুডেন্ট আর লগইন ছাড়া দর্শকের জন্য। শিক্ষকের মেনুতে আগে থেকেই অনেক লিংক, তাই সেখানে নেই।
 const homeLink = { to: '/', label: 'হোম', end: true };
 
 const studentLinks = [homeLink, { to: '/my-results', label: 'আমার ফলাফল' }];
 
+// সক্রিয় লিংকে শুধু সবুজ আন্ডারলাইন, কোনো ব্যাকগ্রাউন্ড নেই।
+// daisyUI-র "menu" ক্লাস সক্রিয় লিংকে কালো ব্যাকগ্রাউন্ড বসায়, তাই লিংকের তালিকায় ওই ক্লাস ব্যবহার করা হয়নি।
 const linkClass = ({ isActive }) =>
   isActive
     ? 'inline-block py-2 text-base font-bold text-primary underline decoration-primary decoration-4 underline-offset-8'
     : 'inline-block py-2 text-base font-medium transition-colors hover:text-primary';
 
+// মোবাইলের ড্রপডাউনে লিংক পুরো সারি জুড়ে ক্লিক করা যায়, শুধু লেখার ওপর নয়
 const mobileLinkClass = ({ isActive }) =>
   isActive
     ? 'block w-full rounded-lg bg-primary/10 px-3 py-3 text-base font-bold text-primary'
@@ -39,6 +43,8 @@ export default function Navbar() {
   const [pendingCount, setPendingCount] = useState(0);
   const links = user?.role === 'teacher' ? (user.isOwner ? [...teacherLinks, ownerLink] : teacherLinks) : user ? studentLinks : [homeLink];
 
+  // মূল শিক্ষকের মেনুতে অপেক্ষায় থাকা অনুরোধের সংখ্যা দেখায়, পেজ বদলালে আবার গোনে
+  // অনুমোদন বা বাতিলের পর "শিক্ষক অনুরোধ" পেজ 'fos:teachers-changed' ডাকে, তখনো আবার গোনে
   useEffect(() => {
     if (!user?.isOwner) return;
     let ignore = false;

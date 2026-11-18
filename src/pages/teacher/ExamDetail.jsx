@@ -11,7 +11,7 @@ import ErrorBox from '../../components/common/ErrorBox.jsx';
 import Loader from '../../components/common/Loader.jsx';
 import MathText from '../../components/math/MathText.jsx';
 import useFetch from '../../hooks/useFetch.js';
-import { LETTERS, formatDateTime, formatNumber, toBn } from '../../utils/format.js';
+import { lettersOf, formatDateTime, formatNumber, toBn } from '../../utils/format.js';
 
 export default function ExamDetail() {
   const { id } = useParams();
@@ -244,7 +244,7 @@ function QuestionAnalysis({ analysis }) {
               <div className="mt-3 grid grid-cols-2 gap-2 text-sm sm:grid-cols-4">
                 {q.optionCounts.map((count, i) => (
                   <div key={i} className={`rounded border px-2 py-1 ${i === q.correctIndex ? 'border-success bg-success/10' : 'border-base-300'}`}>
-                    {LETTERS[i]}: {toBn(count)} জন{i === q.correctIndex && <span className="text-success"> (সঠিক)</span>}
+                    {lettersOf(q.optionStyle)[i]}: {toBn(count)} জন{i === q.correctIndex && <span className="text-success"> (সঠিক)</span>}
                   </div>
                 ))}
               </div>

@@ -1,6 +1,18 @@
 const BN_DIGITS = '০১২৩৪৫৬৭৮৯';
 
 export const LETTERS = ['ক', 'খ', 'গ', 'ঘ'];
+export const EN_LETTERS = ['A', 'B', 'C', 'D'];
+
+// প্রশ্নের অপশনের চিহ্ন: 'bn' হলে ক খ গ ঘ, 'en' হলে A B C D (ইংরেজি বিষয়ের জন্য)
+export const lettersOf = (style) => (style === 'en' ? EN_LETTERS : LETTERS);
+
+// অপশন আর প্রশ্নে একটাও বাংলা অক্ষর না থাকলে ইংরেজি প্রশ্ন ধরে নেয়
+export function guessOptionStyle(text, options = []) {
+  const all = [text, ...options.map((o) => (typeof o === 'string' ? o : o?.text))].join(' ');
+  const hasLatin = /[A-Za-z]{2,}/.test(all);
+  const hasBangla = /[\u0980-\u09FF]/.test(all);
+  return hasLatin && !hasBangla ? 'en' : 'bn';
+}
 
 // 12 -> ১২
 export const toBn = (value) => String(value).replace(/\d/g, (d) => BN_DIGITS[d]);

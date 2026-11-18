@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import { FiCopy, FiTrash2 } from 'react-icons/fi';
-import { LETTERS, toBn } from '../../utils/format.js';
+import { lettersOf, toBn } from '../../utils/format.js';
 import { insertSnippet } from '../../utils/insertSnippet.js';
 import MathText from '../math/MathText.jsx';
 import MathToolbar from './MathToolbar.jsx';
@@ -36,6 +36,7 @@ export default function QuestionEditorCard({
   const [explanationOpen] = useState(Boolean(card.explanation || card.explanationImage));
   const focused = useRef({ key: 'text', el: null }); // কোন ঘরে সবশেষ ক্লিক করা হয়েছে
 
+  const letters = lettersOf(card.optionStyle);
   const heading = title ?? (index != null ? `প্রশ্ন ${toBn(index + 1)}` : null);
 
   const valueOf = (key) => (key.startsWith('o') ? card.options[Number(key[1])].text : card[key] || '');
@@ -121,6 +122,18 @@ export default function QuestionEditorCard({
 
         <MathToolbar onInsert={insert} />
 
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-base">
+          <span className="font-medium">অপশনের চিহ্ন:</span>
+          <label className="flex cursor-pointer items-center gap-2">
+            <input type="radio" name={`style-${card.id}`} className="radio radio-primary radio-sm" checked={card.optionStyle !== 'en'} onChange={() => onChange({ optionStyle: 'bn' })} />
+            ক খ গ ঘ
+          </label>
+          <label className="flex cursor-pointer items-center gap-2">
+            <input type="radio" name={`style-${card.id}`} className="radio radio-primary radio-sm" checked={card.optionStyle === 'en'} onChange={() => onChange({ optionStyle: 'en' })} />
+            A B C D
+          </label>
+        </div>
+
         <fieldset className="grid gap-2">
           <legend className="mb-1 text-base font-medium">{pickAnswer ? 'অপশন (সঠিকটার পাশের গোল ঘরে টিক দাও)' : 'অপশন'}</legend>
           {card.options.map((option, i) => (
@@ -133,11 +146,11 @@ export default function QuestionEditorCard({
                     className="radio radio-success"
                     checked={card.correctIndex === i}
                     onChange={() => onChange({ correctIndex: i })}
-                    aria-label={`অপশন ${LETTERS[i]} সঠিক উত্তর`}
+                    aria-label={`অপশন ${letters[i]} সঠিক উত্তর`}
                   />
                 )}
-                <span className="w-5 text-base font-semibold">{LETTERS[i]}</span>
-                <input className="input w-full text-base" value={option.text} onFocus={track(`o${i}`)} onChange={(e) => setOption(i, { text: e.target.value })} placeholder={`অপশন ${LETTERS[i]}`} />
+                <span className="w-5 text-base font-semibold">{letters[i]}</span>
+                <input className="input w-full text-base" value={option.text} onFocus={track(`o${i}`)} onChange={(e) => setOption(i, { text: e.target.value })} placeholder={`অপশন ${letters[i]}`} />
               </div>
               <div className="sm:pl-16">
                 <LivePreview text={option.text} />

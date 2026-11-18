@@ -35,17 +35,17 @@ export default function Login() {
       <div className="mb-6 flex flex-col items-center text-center">
         <img src="/logo.png" alt="Foundation of Science" className="mb-3 h-16 w-16" />
         <h1 className="text-2xl font-bold">আবার স্বাগতম</h1>
-        <p className="mt-1 text-base text-base-content/85">লগইন করে তোমার পরীক্ষা শুরু করো</p>
+        <p className="mt-1 text-base-content/85">লগইন করে তোমার পরীক্ষা শুরু করো</p>
       </div>
 
       <form onSubmit={handleSubmit} className="grid gap-4 rounded-box border border-base-300 p-5 sm:p-6">
-        <Field label={<span className="text-sm font-semibold">ইমেইল</span>}>
-          <input type="email" required autoComplete="email" className="input w-full text-base" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
+        <Field label="ইমেইল">
+          <input type="email" required autoComplete="email" className="input w-full" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
         </Field>
-        <Field label={<span className="text-sm font-semibold">পাসওয়ার্ড</span>}>
-          <PasswordInput autoComplete="current-password" className="text-base" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} />
+        <Field label="পাসওয়ার্ড">
+          <PasswordInput autoComplete="current-password" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} />
         </Field>
-        <button type="submit" className="btn btn-primary w-full text-base font-semibold" disabled={submitting}>
+        <button type="submit" className="btn btn-primary w-full" disabled={submitting}>
           {submitting && <span className="loading loading-spinner loading-sm" />}
           লগইন করো
         </button>

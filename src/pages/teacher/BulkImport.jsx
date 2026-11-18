@@ -131,7 +131,17 @@ export default function BulkImport() {
     setServerErrors([]);
     try {
       const form = new FormData();
-      for (const { file } of images) form.append('images', await compressImage(file));
+      let totalSize = 0;
+      for (const { file } of images) {
+        const small = await compressImage(file);
+        totalSize += small.size;
+        form.append('images', small);
+      }
+      // Vercel এ একটা অনুরোধ ৪.৫ MB এর বেশি হতে পারে না
+      if (totalSize > 4 * 1024 * 1024) {
+        toast.error('ছবিগুলো মিলিয়ে অনেক বড় হয়ে গেছে। কম ছবি দিয়ে আলাদা আলাদা বার চেষ্টা করো।');
+        return;
+      }
       form.append('mode', mode);
       form.append('numbers', numbers);
 
@@ -204,6 +214,9 @@ export default function BulkImport() {
     if (Object.keys(rest).length > 0) editItem(index, rest);
   }
 
+  // সবগুলো প্রশ্নের অপশনের চিহ্ন একবারে বদলানো (ইংরেজি বিষয়ে A B C D)
+  const setAllOptionStyle = (style) => setItems((prev) => prev.map((item) => ({ ...item, optionStyle: style })));
+
   // বইয়ের শেষের উত্তরমালা থাকলে "খ ক গ ঘ ..." লিখে সবগুলো একবারে বসানো যায়
   function applyAnswerKey() {
     const key = parseAnswerKey(answerKey);
@@ -236,6 +249,7 @@ export default function BulkImport() {
         correctIndex: item.correctIndex,
         explanation: item.explanation,
         explanationImage: item.explanationImage,
+        optionStyle: item.optionStyle,
       }));
       const result = await bulkCreateQuestions({ chapter, subject, questions });
 
@@ -395,8 +409,19 @@ export default function BulkImport() {
             </Field>
           </div>
 
+          <div className="mb-4 flex flex-wrap items-center gap-x-4 gap-y-2 rounded-box border border-base-300 p-3 text-base sm:p-4">
+            <span className="font-medium">সব প্রশ্নের অপশনের চিহ্ন:</span>
+            <button type="button" className={`btn btn-sm ${items.every((i) => i.optionStyle !== 'en') ? 'btn-primary' : 'btn-outline'}`} onClick={() => setAllOptionStyle('bn')}>
+              ক খ গ ঘ
+            </button>
+            <button type="button" className={`btn btn-sm ${items.every((i) => i.optionStyle === 'en') ? 'btn-primary' : 'btn-outline'}`} onClick={() => setAllOptionStyle('en')}>
+              A B C D
+            </button>
+            <span className="text-sm text-base-content/85">ইংরেজি প্রশ্ন হলে নিজে থেকেই A B C D ধরা হয়। দরকার হলে এখান থেকে বদলাও।</span>
+          </div>
+
           <div className="mb-4 rounded-box border border-base-300 p-3 sm:p-4">
-            <Field label="বইয়ের শেষে উত্তরমালা থাকলে এখানে লিখে একবারে বসাও (ঐচ্ছিক)" hint="প্রশ্নগুলো নিচে যে ক্রমে দেখাচ্ছে সেই ক্রমে ক, খ, গ, ঘ লেখো। যেমন: খ ক গ ঘ খ">
+            <Field label="বইয়ের শেষে উত্তরমালা থাকলে এখানে লিখে একবারে বসাও (ঐচ্ছিক)" hint="প্রশ্নগুলো নিচে যে ক্রমে দেখাচ্ছে সেই ক্রমে ক, খ, গ, ঘ (বা A, B, C, D) লেখো। যেমন: খ ক গ ঘ খ">
               <span className="flex gap-2">
                 <input className="input w-full" value={answerKey} onChange={(e) => setAnswerKey(e.target.value)} placeholder="খ ক গ ঘ খ ..." />
                 <button type="button" className="btn btn-outline btn-primary shrink-0" onClick={applyAnswerKey} disabled={!answerKey.trim()}>
@@ -472,7 +497,7 @@ export default function BulkImport() {
                 )}
                 {item.needsImage && (
                   <p className="mb-3 rounded bg-secondary/30 px-3 py-2 text-base">
-                    এই প্রশ্নে ছবি লাগবে ({item.needsImage})। নিচের "সঠিক উত্তর বাছো, লেখা ঠিক করো, ছবি ও ব্যাখ্যা যোগ করো" অংশ থেকে ছবি দাও।
+                    এই প্রশ্নে ছবি লাগবে ({item.needsImage})। নিচের "লেখা ঠিক করো, ছবি ও ব্যাখ্যা যোগ করো" অংশ থেকে ছবি দাও।
                   </p>
                 )}
                 {item.options.length === 4 ? (

@@ -44,11 +44,8 @@
 }
 
 html {
-  /* বাংলা ও ইংরেজির জন্য স্ট্যান্ডার্ড এবং শক্তিশালী ফন্ট স্ট্যাক, যা সংখ্যা ও লেখাকে নিখুঁত রাখবে */
-  font-family: "Noto Sans Bengali", "Hind Siliguri", "Kalpurush", "SolaimanLipi", system-ui, -apple-system, sans-serif;
+  font-family: "Hind Siliguri", system-ui, sans-serif;
   font-size: 106.25%; /* ১৭ পিক্সেল: লেখা একটু বড়, সহজে পড়া যায় */
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 }
 
 body {
