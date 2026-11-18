@@ -41,7 +41,7 @@ export default function Home() {
 
         <h1 className="text-4xl leading-tight font-bold text-balance sm:text-5xl lg:text-6xl">
           পরীক্ষার প্রস্তুতি হোক{" "}
-          <span className="text-primary underline decoration-secondary decoration-8 underline-offset-4">
+          <span className="text-primary decoration-secondary decoration-8 underline-offset-4">
             সহজ
           </span>
           , আর আত্মবিশ্বাসের সাথে
