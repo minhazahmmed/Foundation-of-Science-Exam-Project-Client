@@ -68,7 +68,7 @@ export default function Result() {
           {forTeacher ? `${data.student.name} · ` : ''}
           {data.exam.title}
         </p>
-        <p className="mt-3 text-5xl font-bold text-primary sm:text-6xl">
+        <p className="mt-3 text-5xl font-semibold text-primary sm:text-6xl">
           {formatNumber(data.score)}
           <span className="text-2xl font-medium text-base-content/75 sm:text-3xl"> / {formatNumber(data.total)}</span>
         </p>
