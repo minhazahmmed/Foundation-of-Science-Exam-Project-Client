@@ -118,7 +118,7 @@ export default function QuestionBank() {
                 <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
                   <div className="flex flex-wrap gap-2 text-xs">
                     {q.subject && <span className="badge badge-primary badge-soft">{q.subject}</span>}
-                    {q.chapter && <span className="badge badge-secondary badge-soft">{q.chapter}</span>}
+                   {q.chapter && <span className="badge border-secondary bg-secondary/40 font-semibold text-base-content">{q.chapter}</span>}
                   </div>
                   <div className="flex gap-1">
                     <button type="button" className="btn btn-ghost btn-sm" onClick={() => setEditing(q)}>
