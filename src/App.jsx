@@ -18,12 +18,14 @@ import QuestionBank from './pages/teacher/QuestionBank.jsx';
 import QuestionBuilder from './pages/teacher/QuestionBuilder.jsx';
 import TeacherRequests from './pages/teacher/TeacherRequests.jsx';
 import PrivateRoute from './routes/PrivateRoute.jsx';
+import { Analytics } from '@vercel/analytics/react';
 
 export default function App() {
   return (
     <>
       <ScrollToTop />
       <Toaster position="top-center" toastOptions={{ style: { maxWidth: 480 } }} />
+      <Analytics />
 
       <Routes>
         {/* পরীক্ষা চলার সময় মেনু ছাড়া পরিষ্কার পেজ */}
