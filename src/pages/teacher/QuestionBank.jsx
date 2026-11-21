@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { FiEdit2, FiPlus, FiSearch, FiTrash2 } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
@@ -33,6 +33,16 @@ export default function QuestionBank() {
   const questions = useFetch(questionsFetcher);
   const chapters = useFetch(chaptersFetcher);
   const chapterList = chapters.data?.chapters || [];
+
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setSearch(searchInput.trim());
+      setPage(1);
+    }, 350);
+    return () => clearTimeout(timer);
+  }, [searchInput]);
+
 
   function handleSearch(event) {
     event.preventDefault();
