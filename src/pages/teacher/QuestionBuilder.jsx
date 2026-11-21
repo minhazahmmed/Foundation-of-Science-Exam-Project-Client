@@ -37,6 +37,7 @@ function check(card) {
 export default function QuestionBuilder() {
   const navigate = useNavigate();
   const [cards, setCards] = useState(() => [emptyCard()]);
+  const [classLevel, setClassLevel] = useState('');
   const [subject, setSubject] = useState('');
   const [chapter, setChapter] = useState('');
   const [tried, setTried] = useState(false); // সেভ করতে গিয়ে একবার আটকালে তারপর থেকে ভুলগুলো দেখায়
@@ -76,7 +77,7 @@ export default function QuestionBuilder() {
         explanationImage: c.explanationImage,
         optionStyle: c.optionStyle,
       }));
-      const result = await bulkCreateQuestions({ subject, chapter, questions });
+      const result = await bulkCreateQuestions({ classLevel, subject, chapter, questions });
       toast.success(`${toBn(result.created)}টি প্রশ্ন প্রশ্ন ব্যাংকে যোগ হয়েছে`);
       navigate('/teacher/questions');
     } catch (err) {
@@ -95,7 +96,15 @@ export default function QuestionBuilder() {
         actions={<Link to="/teacher/import" className="btn btn-outline">ছবি থেকে প্রশ্ন নাও</Link>}
       />
 
-      <section className="mb-5 grid gap-3 rounded-box border border-base-300 p-4 sm:grid-cols-2 sm:p-5">
+      <section className="mb-5 grid gap-3 rounded-box border border-base-300 p-4 sm:grid-cols-3 sm:p-5">
+        <Field label="শ্রেণি" hint="নিচের সব প্রশ্নে বসে যাবে (ঐচ্ছিক)">
+          <input className="input w-full" list="builder-classes" value={classLevel} onChange={(e) => setClassLevel(e.target.value)} placeholder="যেমন: সপ্তম বা একাদশ" />
+          <datalist id="builder-classes">
+            {(chapters.data?.classes || []).map((c) => (
+              <option key={c} value={c} />
+            ))}
+          </datalist>
+        </Field>
         <Field label="বিষয়" hint="নিচের সব প্রশ্নে বসে যাবে (ঐচ্ছিক)">
           <input className="input w-full" value={subject} onChange={(e) => setSubject(e.target.value)} placeholder="যেমন: উচ্চতর গণিত" />
         </Field>

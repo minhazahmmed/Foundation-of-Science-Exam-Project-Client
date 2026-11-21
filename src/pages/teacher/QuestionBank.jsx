@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import { FiEdit2, FiPlus, FiSearch, FiTrash2 } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
@@ -14,40 +14,72 @@ import QuestionView from '../../components/question/QuestionView.jsx';
 import useFetch from '../../hooks/useFetch.js';
 import { toBn } from '../../utils/format.js';
 
+// ফিল্টার ঠিকানার (URL) সাথে জমা থাকে, তাই পেজ রিফ্রেশ দিলেও ফিরে আসে
+function readFilters() {
+  const p = new URLSearchParams(window.location.search);
+  return {
+    classLevel: p.get('class') || '',
+    chapter: p.get('chapter') || '',
+    search: p.get('q') || '',
+    page: Math.max(1, Number(p.get('page')) || 1),
+  };
+}
+
 export default function QuestionBank() {
-  const [chapter, setChapter] = useState('');
-  const [searchInput, setSearchInput] = useState('');
-  const [search, setSearch] = useState('');
-  const [page, setPage] = useState(1);
+  const [initial] = useState(readFilters); // পেজ খোলার সময় একবারই পড়া হয়
+  const [classLevel, setClassLevel] = useState(initial.classLevel);
+  const [chapter, setChapter] = useState(initial.chapter);
+  const [searchInput, setSearchInput] = useState(initial.search);
+  const [search, setSearch] = useState(initial.search);
+  const [page, setPage] = useState(initial.page);
+  const lastSearch = useRef(initial.search); // শেষবার যা দিয়ে খোঁজা হয়েছে
 
   const [editing, setEditing] = useState(null); // null = বন্ধ, {} = নতুন, প্রশ্ন = ঠিক করা
   const [deleting, setDeleting] = useState(null);
   const [deleteBusy, setDeleteBusy] = useState(false);
 
   const questionsFetcher = useCallback(
-    () => listQuestions({ chapter, search, page, limit: 10 }),
-    [chapter, search, page]
+    () => listQuestions({ classLevel, chapter, search, page, limit: 10 }),
+    [classLevel, chapter, search, page]
   );
   const chaptersFetcher = useCallback(() => listChapters(), []);
 
   const questions = useFetch(questionsFetcher);
   const chapters = useFetch(chaptersFetcher);
   const chapterList = chapters.data?.chapters || [];
+  const classList = chapters.data?.classes || [];
 
 
+  // লেখার সাথে সাথে খোঁজে (থামার ০.৩৫ সেকেন্ড পর)। সব মুছলে সব প্রশ্ন ফিরে আসে।
   useEffect(() => {
     const timer = setTimeout(() => {
-      setSearch(searchInput.trim());
+      const value = searchInput.trim();
+      if (value === lastSearch.current) return; // বদলায়নি, তাই পাতা ১-এ ফেরানোর দরকার নেই
+      lastSearch.current = value;
+      setSearch(value);
       setPage(1);
     }, 350);
     return () => clearTimeout(timer);
   }, [searchInput]);
 
+  // শ্রেণি, অধ্যায়, খোঁজা আর পাতা বদলালে ঠিকানায় লিখে রাখে (নতুন ইতিহাস না বানিয়ে)
+  useEffect(() => {
+    const p = new URLSearchParams();
+    if (classLevel) p.set('class', classLevel);
+    if (chapter) p.set('chapter', chapter);
+    if (search) p.set('q', search);
+    if (page > 1) p.set('page', String(page));
+    const qs = p.toString();
+    window.history.replaceState(window.history.state, '', qs ? `?${qs}` : window.location.pathname);
+  }, [classLevel, chapter, search, page]);
+
 
   function handleSearch(event) {
     event.preventDefault();
+    const value = searchInput.trim();
+    lastSearch.current = value;
     setPage(1);
-    setSearch(searchInput.trim());
+    setSearch(value);
   }
 
   function handleSaved(result) {
@@ -94,13 +126,19 @@ export default function QuestionBank() {
         }
       />
 
-      <div className="mb-5 grid gap-2 sm:grid-cols-[1fr_14rem]">
+      <div className="mb-5 grid gap-2 sm:grid-cols-[1fr_11rem_14rem]">
         <form onSubmit={handleSearch} className="join w-full">
           <input className="input join-item w-full" placeholder="প্রশ্নের লেখা দিয়ে খোঁজো" value={searchInput} onChange={(e) => setSearchInput(e.target.value)} aria-label="প্রশ্ন খোঁজো" />
           <button type="submit" className="btn btn-primary join-item" aria-label="খোঁজো">
             <FiSearch aria-hidden="true" />
           </button>
         </form>
+        <select className="select w-full" value={classLevel} onChange={(e) => { setClassLevel(e.target.value); setPage(1); }} aria-label="শ্রেণি বেছে নাও">
+          <option value="">সব শ্রেণি</option>
+          {classList.map((c) => (
+            <option key={c} value={c}>{c}</option>
+          ))}
+        </select>
         <select className="select w-full" value={chapter} onChange={(e) => { setChapter(e.target.value); setPage(1); }} aria-label="অধ্যায় বেছে নাও">
           <option value="">সব অধ্যায়</option>
           {chapterList.map((c) => (
@@ -114,8 +152,8 @@ export default function QuestionBank() {
 
       {data && data.questions.length === 0 && (
         <EmptyState
-          title={search || chapter ? 'কোনো প্রশ্ন পাওয়া যায়নি' : 'প্রশ্ন ব্যাংক এখনো খালি'}
-          text={search || chapter ? 'অন্য কিছু লিখে বা অন্য অধ্যায় বেছে খুঁজে দেখো।' : 'নতুন প্রশ্ন একটা একটা করে যোগ করতে পারো, অথবা JSON থেকে একসাথে অনেক প্রশ্ন ইমপোর্ট করতে পারো।'}
+          title={search || chapter || classLevel ? 'কোনো প্রশ্ন পাওয়া যায়নি' : 'প্রশ্ন ব্যাংক এখনো খালি'}
+          text={search || chapter || classLevel ? 'অন্য কিছু লিখে বা অন্য শ্রেণি বা অধ্যায় বেছে খুঁজে দেখো।' : 'নতুন প্রশ্ন একটা একটা করে যোগ করতে পারো, অথবা JSON থেকে একসাথে অনেক প্রশ্ন ইমপোর্ট করতে পারো।'}
         />
       )}
 
@@ -127,8 +165,9 @@ export default function QuestionBank() {
               <li key={q._id} className="rounded-box border border-base-300 p-4 sm:p-5">
                 <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
                   <div className="flex flex-wrap gap-2 text-xs">
+                    {q.classLevel && <span className="badge  bg-base-300 text-base-content">{q.classLevel}</span>}
                     {q.subject && <span className="badge badge-primary badge-soft">{q.subject}</span>}
-                   {q.chapter && <span className="badge border-secondary bg-secondary/30 text-base-content">{q.chapter}</span>}
+                   {q.chapter && <span className="badge  bg-secondary/30 text-base-content">{q.chapter}</span>}
                   </div>
                   <div className="flex gap-1">
                     <button type="button" className="btn btn-ghost btn-sm" onClick={() => setEditing(q)}>
@@ -158,6 +197,7 @@ export default function QuestionBank() {
         <QuestionForm
           question={editing._id ? editing : null}
           chapters={chapterList}
+          classes={classList}
           onSaved={handleSaved}
           onClose={() => setEditing(null)}
         />

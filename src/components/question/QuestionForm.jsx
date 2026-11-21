@@ -32,8 +32,22 @@ const cardFrom = (q) => ({
 });
 
 // question না দিলে নতুন প্রশ্ন, দিলে সেই প্রশ্ন ঠিক করা
-export default function QuestionForm({ question, chapters = [], onSaved, onClose }) {
-  const [meta, setMeta] = useState({ subject: question?.subject || '', chapter: question?.chapter || '', board: question?.board || '' });
+export default function QuestionForm({ question, groups = [], chapters: chapterProp = [], classes = [], onSaved, onClose }) {
+  const [meta, setMeta] = useState({
+    classLevel: question?.classLevel || '',
+    subject: question?.subject || '',
+    chapter: question?.chapter || '',
+    board: question?.board || '',
+    // নতুন প্রশ্নে ফাঁকা রাখলে নিজে থেকে পরের নম্বর বসবে
+    serial: question?.serial > 0 ? String(question.serial) : '',
+  });
+  const uniq = (list) => [...new Set(list.filter(Boolean))];
+  const classOptions = uniq([...classes, ...groups.map((g) => g.classLevel)]);
+  const subjectOptions = uniq(groups.filter((g) => !meta.classLevel || g.classLevel === meta.classLevel).map((g) => g.subject));
+  const chapters = uniq([
+    ...chapterProp,
+    ...groups.filter((g) => (!meta.classLevel || g.classLevel === meta.classLevel) && (!meta.subject || g.subject === meta.subject)).map((g) => g.chapter),
+  ]);
   const [card, setCard] = useState(() => (question ? cardFrom(question) : emptyCard()));
   const [saving, setSaving] = useState(false);
 
@@ -87,9 +101,22 @@ export default function QuestionForm({ question, chapters = [], onSaved, onClose
               সমীকরণ লিখতে নিচের চিহ্নের বোতাম চাপো, অথবা <code className="rounded bg-base-200 px-1">$</code> চিহ্নের ভেতরে লেখো। লেখার ঘরের নিচেই দেখতে পাবে সমীকরণ কেমন দেখাবে।
             </p>
 
-            <div className="mt-4 grid gap-3 sm:grid-cols-3">
+            <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              <Field label="শ্রেণি">
+                <input className="input w-full text-base" list="class-list" value={meta.classLevel} onChange={setMetaValue('classLevel')} placeholder="যেমন: সপ্তম বা একাদশ" />
+                <datalist id="class-list">
+                  {classOptions.map((c) => (
+                    <option key={c} value={c} />
+                  ))}
+                </datalist>
+              </Field>
               <Field label="বিষয়">
-                <input className="input w-full text-base" value={meta.subject} onChange={setMetaValue('subject')} placeholder="যেমন: উচ্চতর গণিত" />
+                <input className="input w-full text-base" list="subject-list" value={meta.subject} onChange={setMetaValue('subject')} placeholder="যেমন: উচ্চতর গণিত" />
+                <datalist id="subject-list">
+                  {subjectOptions.map((c) => (
+                    <option key={c} value={c} />
+                  ))}
+                </datalist>
               </Field>
               <Field label="অধ্যায়">
                 <input className="input w-full text-base" list="chapter-list" value={meta.chapter} onChange={setMetaValue('chapter')} placeholder="যেমন: ভেক্টর" />
@@ -98,6 +125,9 @@ export default function QuestionForm({ question, chapters = [], onSaved, onClose
                     <option key={c} value={c} />
                   ))}
                 </datalist>
+              </Field>
+              <Field label="প্রশ্নের নম্বর" hint="এই অধ্যায়ের ভেতরে কত নম্বর প্রশ্ন। ফাঁকা রাখলে শেষের পরের নম্বর বসবে">
+                <input className="input w-full text-base" type="number" min="0" inputMode="numeric" value={meta.serial} onChange={setMetaValue('serial')} placeholder="যেমন: ১৭" />
               </Field>
               <Field label="বোর্ড (ঐচ্ছিক)">
                 <input className="input w-full text-base" value={meta.board} onChange={setMetaValue('board')} placeholder="যেমন: ঢা. বো. ২০১৯" />

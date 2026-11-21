@@ -16,9 +16,10 @@ export default function QuestionView({ question, number, mode: givenMode = 'bank
 
   return (
     <article className="flex flex-col gap-3">
-      <div className="flex flex-wrap items-center gap-2 text-sm">
-        {number != null && <span className="font-semibold text-primary">প্রশ্ন {toBn(number)}</span>}
-        {board && <span className="badge badge-ghost">{board}</span>}
+      <div className="flex flex-wrap items-start gap-x-2 gap-y-1 text-sm">
+        {number != null && <span className="shrink-0 py-0.5 font-semibold text-primary">প্রশ্ন {toBn(number)}</span>}
+        {/* daisyUI badge-এর উচ্চতা নির্দিষ্ট, তাই লম্বা বোর্ডের নাম ভেঙে ওপরে উঠে যেত। এখানে সাধারণ ট্যাগ, যার উচ্চতা লেখা অনুযায়ী বাড়ে */}
+        {board && <span className="min-w-0 max-w-full rounded-lg bg-base-200 px-2.5 py-1 leading-6 text-base-content/80">{board}</span>}
       </div>
 
       {(passage || passageImage) && (

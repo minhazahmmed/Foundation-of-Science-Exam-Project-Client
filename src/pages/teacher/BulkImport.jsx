@@ -66,6 +66,7 @@ export default function BulkImport() {
 
   // প্রশ্নের তালিকা (পর্দায় যা দেখছ, সেভও হবে ঠিক তাই)
   const [json, setJson] = useState(draft?.json ?? '');
+  const [classLevel, setClassLevel] = useState(draft?.classLevel ?? '');
   const [chapter, setChapter] = useState(draft?.chapter ?? '');
   const [subject, setSubject] = useState(draft?.subject ?? '');
   const [items, setItems] = useState(draft?.items ?? null);
@@ -79,20 +80,21 @@ export default function BulkImport() {
   useEffect(() => {
     try {
       if (items && items.length > 0) {
-        localStorage.setItem(DRAFT_KEY, JSON.stringify({ items, json, chapter, subject, answerKey, missing }));
+        localStorage.setItem(DRAFT_KEY, JSON.stringify({ items, json, classLevel, chapter, subject, answerKey, missing }));
       } else {
         localStorage.removeItem(DRAFT_KEY);
       }
     } catch {
       // জায়গা ভরে গেলে অটোসেভ বন্ধ থাকবে, বাকি সব ঠিকই চলবে
     }
-  }, [items, json, chapter, subject, answerKey, missing]);
+  }, [items, json, classLevel, chapter, subject, answerKey, missing]);
 
   function startOver() {
     if (!window.confirm('এখনকার সব প্রশ্ন মুছে নতুন করে শুরু করবে?')) return;
     clearDraft();
     setItems(null);
     setJson('');
+    setClassLevel('');
     setChapter('');
     setSubject('');
     setAnswerKey('');
@@ -251,7 +253,7 @@ export default function BulkImport() {
         explanationImage: item.explanationImage,
         optionStyle: item.optionStyle,
       }));
-      const result = await bulkCreateQuestions({ chapter, subject, questions });
+      const result = await bulkCreateQuestions({ classLevel, chapter, subject, questions });
 
       if (ready.length === items.length) {
         clearDraft();
@@ -303,7 +305,7 @@ export default function BulkImport() {
 
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
           {images.map((img, i) => (
-            <div key={img.url} className="relative aspect-[3/4] overflow-hidden rounded-box border border-base-300 bg-base-200">
+            <div key={img.url} className="relative aspect-3/4 overflow-hidden rounded-box border border-base-300 bg-base-200">
               <img src={img.url} alt={`পাতা ${toBn(i + 1)}`} className="h-full w-full object-cover" />
               <button type="button" onClick={() => removeImage(i)} className="btn btn-circle btn-xs btn-neutral absolute top-1 right-1" aria-label={`পাতা ${toBn(i + 1)} সরাও`} disabled={extracting}>
                 <FiX aria-hidden="true" />
@@ -312,7 +314,7 @@ export default function BulkImport() {
             </div>
           ))}
           {images.length < MAX_IMAGES && (
-            <button type="button" onClick={() => fileInput.current.click()} disabled={extracting} className="flex aspect-[3/4] flex-col items-center justify-center gap-1 rounded-box border border-dashed border-primary text-primary hover:bg-primary/5">
+            <button type="button" onClick={() => fileInput.current.click()} disabled={extracting} className="flex aspect-3/4 flex-col items-center justify-center gap-1 rounded-box border border-dashed border-primary text-primary hover:bg-primary/5">
               <FiImage size={24} aria-hidden="true" />
               <span className="px-2 text-center text-sm">{images.length ? 'আরও ছবি' : 'ছবি বাছো'}</span>
             </button>
@@ -400,7 +402,10 @@ export default function BulkImport() {
         <section className="mt-8">
           <h2 className="mb-3 text-lg font-semibold">৩. সঠিক উত্তর বেছে দাও, তারপর সেভ করো</h2>
 
-          <div className="mb-4 grid gap-3 sm:grid-cols-2">
+          <div className="mb-4 grid gap-3 sm:grid-cols-3">
+            <Field label="শ্রেণি" hint="সবগুলো প্রশ্নে বসে যাবে (ঐচ্ছিক)">
+              <input className="input w-full" value={classLevel} onChange={(e) => setClassLevel(e.target.value)} placeholder="যেমন: সপ্তম বা একাদশ" />
+            </Field>
             <Field label="বিষয়" hint="সবগুলো প্রশ্নে বসে যাবে (ঐচ্ছিক)">
               <input className="input w-full" value={subject} onChange={(e) => setSubject(e.target.value)} placeholder="যেমন: উচ্চতর গণিত" />
             </Field>
