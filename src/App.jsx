@@ -18,7 +18,9 @@ import QuestionBank from './pages/teacher/QuestionBank.jsx';
 import QuestionBuilder from './pages/teacher/QuestionBuilder.jsx';
 import TeacherRequests from './pages/teacher/TeacherRequests.jsx';
 import PrivateRoute from './routes/PrivateRoute.jsx';
+import PrintPaper from './pages/teacher/PrintPaper.jsx';
 import { Analytics } from '@vercel/analytics/react';
+
 
 export default function App() {
   return (
@@ -51,6 +53,7 @@ export default function App() {
 
           <Route path="/teacher" element={<PrivateRoute role="teacher"><Dashboard /></PrivateRoute>} />
           <Route path="/teacher/questions" element={<PrivateRoute role="teacher"><QuestionBank /></PrivateRoute>} />
+          <Route path="/teacher/print" element={<PrivateRoute role="teacher"><PrintPaper /></PrivateRoute>} />
           <Route path="/teacher/questions/new" element={<PrivateRoute role="teacher"><QuestionBuilder /></PrivateRoute>} />
           <Route path="/teacher/requests" element={<PrivateRoute role="teacher" owner><TeacherRequests /></PrivateRoute>} />
           <Route path="/teacher/import" element={<PrivateRoute role="teacher"><BulkImport /></PrivateRoute>} />

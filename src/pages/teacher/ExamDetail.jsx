@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
 import toast from "react-hot-toast";
-import { FiArrowLeft, FiRefreshCw, FiTrash2 } from "react-icons/fi";
+import { FiArrowLeft, FiFileText, FiRefreshCw, FiTrash2 } from "react-icons/fi";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import {
   Bar,
@@ -26,6 +26,7 @@ import ErrorBox from "../../components/common/ErrorBox.jsx";
 import Loader from "../../components/common/Loader.jsx";
 import MathText from "../../components/math/MathText.jsx";
 import useFetch from "../../hooks/useFetch.js";
+import { startPaperFromExam } from "../../utils/printSelection.js";
 import {
   lettersOf,
   formatDateTime,
@@ -79,6 +80,12 @@ export default function ExamDetail() {
     );
 
   const regrade = () => run("regrade", () => regradeExam(id));
+
+  // এই পরীক্ষার প্রশ্ন নিয়ে ছাপার মতো প্রশ্নপত্র (PDF) বানানোর পেজে যায়
+  function openPaper() {
+    startPaperFromExam(info);
+    navigate("/teacher/print");
+  }
 
   async function handleDelete() {
     setBusy("delete");
@@ -136,6 +143,15 @@ export default function ExamDetail() {
             done="পরীক্ষার লিংক কপি হয়েছে"
             className="btn btn-primary btn-sm"
           />
+
+          <button
+            type="button"
+            className="btn btn-outline btn-sm"
+            onClick={openPaper}
+          >
+            <FiFileText aria-hidden="true" /> প্রশ্নপত্র PDF
+          </button>
+
           <button
             type="button"
             className="btn btn-outline btn-sm"
