@@ -1,21 +1,29 @@
 const KEY = 'fos-print-selection-v1';
 
-// প্রশ্নপত্রের জন্য বাছা প্রশ্নগুলো ব্রাউজারের এই ট্যাবে জমা থাকে (পেজ বদলালেও থাকে)
-export function loadSelection() {
+// বাছা প্রশ্নগুলো এই ট্যাবে (sessionStorage) জমা থাকে, আর একটা কপি localStorage এও থাকে।
+// তাই লিংক কপি করে নতুন ট্যাবে খুললেও শেষবারের বাছা প্রশ্নগুলো পাওয়া যায়।
+function readList(storage) {
   try {
-    const list = JSON.parse(sessionStorage.getItem(KEY) || '[]');
+    const list = JSON.parse(storage.getItem(KEY) || '[]');
     return Array.isArray(list) ? list : [];
   } catch {
     return [];
   }
 }
 
+export function loadSelection() {
+  const own = readList(sessionStorage);
+  return own.length > 0 ? own : readList(localStorage);
+}
+
 export function saveSelection(list) {
-  try {
-    if (list.length === 0) sessionStorage.removeItem(KEY);
-    else sessionStorage.setItem(KEY, JSON.stringify(list));
-  } catch {
-    // জমা রাখা না গেলেও কাজ চলবে
+  for (const storage of [sessionStorage, localStorage]) {
+    try {
+      if (list.length === 0) storage.removeItem(KEY);
+      else storage.setItem(KEY, JSON.stringify(list));
+    } catch {
+      // জমা রাখা না গেলেও কাজ চলবে
+    }
   }
 }
 

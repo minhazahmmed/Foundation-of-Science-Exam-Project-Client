@@ -19,6 +19,7 @@ import QuestionBuilder from './pages/teacher/QuestionBuilder.jsx';
 import TeacherRequests from './pages/teacher/TeacherRequests.jsx';
 import PrivateRoute from './routes/PrivateRoute.jsx';
 import PrintPaper from './pages/teacher/PrintPaper.jsx';
+import PracticePaper from './pages/student/PracticePaper.jsx';
 import { Analytics } from '@vercel/analytics/react';
 
 
@@ -50,6 +51,7 @@ export default function App() {
 
           <Route path="/my-results" element={<PrivateRoute role="student"><MyResults /></PrivateRoute>} />
           <Route path="/result/:id" element={<PrivateRoute><Result /></PrivateRoute>} />
+         <Route path="/result/:id/print" element={<PrivateRoute role="student"><PracticePaper /></PrivateRoute>} />
 
           <Route path="/teacher" element={<PrivateRoute role="teacher"><Dashboard /></PrivateRoute>} />
           <Route path="/teacher/questions" element={<PrivateRoute role="teacher"><QuestionBank /></PrivateRoute>} />
