@@ -112,13 +112,11 @@ export default function PrintPaper() {
     <>
       {/* প্রিন্টের সময় মেনু, ফুটার আর সেটিংস লুকিয়ে শুধু কাগজ দেখানো হয় */}
       <style>{`
-        @page { size: A4; margin: 10mm 10mm 15mm 10mm; }
-        .paper-credit-print { display: none; }
+        @page { size: A4; margin: 10mm 10mm 15mm 10mm; @bottom-center { content: "Powered by Foundation of Science"; font-size: 10px; color: #000; } }
         @media print {
           header, footer, .no-print { display: none !important; }
           html, body { background: #fff !important; }
           .paper-zoom { zoom: 1 !important; width: auto !important; max-width: none !important; box-shadow: none !important; }
-          .paper-credit-print { display: block !important; position: fixed; left: 0; right: 0; bottom: 0; text-align: center; font-size: 11px; color: #000; border-top: 1px solid #000; padding-top: 2px; background: #fff; }
           .paper-credit-screen { display: none !important; }
           main, .paper-outer { padding: 0 !important; margin: 0 !important; max-width: none !important; }
         }
@@ -217,9 +215,6 @@ export default function PrintPaper() {
 
         <h2 className="mb-2 text-lg font-semibold">কাগজের প্রিভিউ</h2>
       </div>
-
-      {/* প্রিন্টে প্রতিটা পাতার নিচে বসে (fixed উপাদান প্রতি পাতায় আসে) */}
-      <div className="paper-credit-print">Powered by Foundation of Science</div>
 
       <div ref={wrapRef} className="paper-outer overflow-hidden rounded-box border border-base-300 bg-base-200 p-2 sm:p-4 print:border-0 print:bg-white print:p-0">
         <div
