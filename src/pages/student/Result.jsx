@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { FiArrowLeft, FiFileText } from "react-icons/fi";
+import { FiArrowLeft, FiBarChart2, FiFileText, FiRepeat } from 'react-icons/fi';
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { getResult } from "../../api/attempts.api.js";
 import ErrorBox from "../../components/common/ErrorBox.jsx";
@@ -99,14 +99,19 @@ export default function Result() {
           জমা দেওয়ার সময়: {formatDateTime(data.submittedAt)}
         </p>
 
-        {!forTeacher && (
-          <Link
-            to={`/result/${id}/print`}
-            className="btn btn-outline btn-primary mt-4"
-          >
-            <FiFileText aria-hidden="true" /> প্রশ্ন ও সমাধান PDF করো
-          </Link>
-        )}
+{!forTeacher && (
+  <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:justify-center">
+    <Link to={`/practice/${id}`} className="btn btn-primary">
+      <FiRepeat aria-hidden="true" /> আবার অনুশীলন করো
+    </Link>
+    <Link to={`/progress/${id}`} className="btn btn-outline btn-primary">
+      <FiBarChart2 aria-hidden="true" /> আমার অগ্রগতি
+    </Link>
+    <Link to={`/result/${id}/print`} className="btn btn-outline btn-primary">
+      <FiFileText aria-hidden="true" /> প্রশ্ন ও সমাধান PDF করো
+    </Link>
+  </div>
+)}
         
         <div className="mt-5 grid grid-cols-3 gap-2 border-t border-base-300 pt-4">
           {stats.map((s) => (
