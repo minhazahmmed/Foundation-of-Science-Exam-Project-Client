@@ -36,3 +36,6 @@ export function formatTimer(totalSeconds) {
 }
 
 export const percentOf = (score, total) => (total ? Math.round((score / total) * 100) : 0);
+
+
+export const examLinkOf = (code) => `${window.location.origin}/exam/${code}`;

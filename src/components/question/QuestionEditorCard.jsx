@@ -31,6 +31,8 @@ export default function QuestionEditorCard({
   canRemove = false,
   pickAnswer = true,
   showPreview = true,
+  imagesLocked = false,
+  onImageLocked,
 }) {
   const [showPassage, setShowPassage] = useState(Boolean(card.passage || card.passageImage));
   const [explanationOpen] = useState(Boolean(card.explanation || card.explanationImage));
@@ -104,7 +106,7 @@ export default function QuestionEditorCard({
             </label>
             <div>
               <span className="mb-1 block text-base font-medium">উদ্দীপকের চিত্র (থাকলে)</span>
-              <ImageInput value={card.passageImage} onChange={(url) => onChange({ passageImage: url })} />
+              <ImageInput locked={imagesLocked} onLocked={onImageLocked} value={card.passageImage} onChange={(url) => onChange({ passageImage: url })} />
             </div>
           </div>
         )}
@@ -117,7 +119,7 @@ export default function QuestionEditorCard({
 
         <div>
           <span className="mb-1 block text-base font-medium">প্রশ্নের ছবি (থাকলে)</span>
-          <ImageInput value={card.image} onChange={(url) => onChange({ image: url })} />
+          <ImageInput locked={imagesLocked} onLocked={onImageLocked} value={card.image} onChange={(url) => onChange({ image: url })} />
         </div>
 
         <MathToolbar onInsert={insert} />
@@ -156,7 +158,7 @@ export default function QuestionEditorCard({
                 <LivePreview text={option.text} />
               </div>
               <div className="mt-2 sm:pl-16">
-                <ImageInput compact value={option.image} onChange={(url) => setOption(i, { image: url })} />
+                <ImageInput locked={imagesLocked} onLocked={onImageLocked} compact value={option.image} onChange={(url) => setOption(i, { image: url })} />
               </div>
             </div>
           ))}
@@ -172,7 +174,7 @@ export default function QuestionEditorCard({
             </label>
             <div>
               <span className="mb-1 block text-base font-medium">সমাধানের ছবি</span>
-              <ImageInput value={card.explanationImage || ''} onChange={(url) => onChange({ explanationImage: url })} />
+              <ImageInput locked={imagesLocked} onLocked={onImageLocked} value={card.explanationImage || ''} onChange={(url) => onChange({ explanationImage: url })} />
               <p className="mt-1 text-sm">খাতায় সমাধান করে ছবি তুলে এখানে দিতে পারো। পরীক্ষার পর স্টুডেন্ট এটা দেখতে পাবে।</p>
             </div>
           </div>

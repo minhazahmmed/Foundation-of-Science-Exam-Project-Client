@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { getMe, loginRequest, registerRequest, requestTeacherRequest } from '../api/auth.api.js';
 import { TOKEN_KEY } from '../api/axios.js';
+import { clearDemoDraft } from '../utils/demoStore.js';
 import { AuthContext } from './authContext.js';
 
 export default function AuthProvider({ children }) {
@@ -28,6 +29,7 @@ export default function AuthProvider({ children }) {
 
   const value = useMemo(() => {
     const saveLogin = (data) => {
+      clearDemoDraft();
       localStorage.setItem(TOKEN_KEY, data.token);
       setUser(data.user);
       return data.user;
@@ -50,6 +52,7 @@ export default function AuthProvider({ children }) {
         return data.user;
       },
       logout: () => {
+        clearDemoDraft();
         localStorage.removeItem(TOKEN_KEY);
         setUser(null);
       },

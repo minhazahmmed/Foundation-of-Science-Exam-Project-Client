@@ -26,7 +26,7 @@ export default function Footer() {
             </span>
           </Link>
           <p className="mt-3 max-w-md text-base leading-relaxed text-base-content/90">
-            A free online MCQ exam platform for students. Take timed exams, get instant results, and learn from your mistakes with step-by-step solutions.
+            A free online MCQ exam platform for HSC students. Take timed exams, get instant results, and learn from your mistakes with step-by-step solutions.
           </p>
         </div>
 

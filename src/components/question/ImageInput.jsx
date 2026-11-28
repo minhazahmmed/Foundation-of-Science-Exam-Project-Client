@@ -5,7 +5,7 @@ import { canUploadImages, uploadImage } from '../../utils/cloudinary.js';
 
 // ছবি আপলোড করার ঘর। Cloudinary ঠিক করা থাকলে ফাইল বেছে নেওয়া যায়,
 // না থাকলে ছবির লিংক বসানোর ঘর দেখায়।
-export default function ImageInput({ value, onChange, compact = false }) {
+export default function ImageInput({ value, onChange, compact = false, locked = false, onLocked }) {
   const [uploading, setUploading] = useState(false);
   const [link, setLink] = useState('');
 
@@ -22,6 +22,15 @@ export default function ImageInput({ value, onChange, compact = false }) {
     } finally {
       setUploading(false);
     }
+  }
+
+  // ডেমো মোডে ছবি আপলোড বন্ধ: বোতাম চাপলে শুধু জানিয়ে দেয়
+  if (locked && !value) {
+    return (
+      <button type="button" className="btn btn-outline btn-sm" onClick={onLocked}>
+        🔒 ছবি যোগ করো
+      </button>
+    );
   }
 
   if (value) {
